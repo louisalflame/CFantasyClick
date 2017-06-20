@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-tw"> 
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="louisalflame">
+
+    <title>CFantasy Click</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+</head>
+
+<body>
+
+	<div id="app">
+        <div class="container">
+
+
+		<div class="row">
+			{{ world }}界
+		</div>
+		<div class="row">
+			境界: {{ levelTxt }}
+		</div>
+		<div class="row">
+			修為: {{ number }}
+		</div>
+		<div class="row">
+			每秒增加 {{ pointPerSec }} 修為
+		</div>
+
+		<div class="row">
+			 <button class="btn btn-default" v-on:click="_addByBody">修練</button>
+		</div>
+
+		<div class="row">
+			靈根: {{ talentTxt }}
+			<button class="btn btn-default" v-on:click="_talentLvUp" :disabled="!talentAble">
+			升級</button>
+			需要 {{ talentNeed }} 修為
+		</div>
+		<div class="row">
+			身體: {{ bodyTxt }} 每次修練增加 {{ bodyNum }} 修為。
+			<button class="btn btn-default" v-on:click="_bodyLvUp" :disabled="!bodyAble">
+			升級</button>
+			需要 {{ bodyNeed }} 修為
+		</div>
+		<div class="row">
+			功法: {{ skillName }}
+		</div>
+		<div class="row">
+			法寶: 無
+		</div>
+
+		</div>
+	</div>
+
+	<script src='js/bignumber.min.js'></script>
+
+    <script src="js/level.js"> </script>
+    <script src="js/skill.js"> </script>    
+    <script src="js/nameMaker.js"> </script>
+
+    <!-- Vue Core JavaScript --> 
+    <script src="js/vue.js"> </script>
+	<script src="js/click.js" > </script>
+	<script src="js/timer.js"></script> 
+
+</body>
+
+</html>
