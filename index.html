@@ -17,47 +17,68 @@
 	<div id="app">
         <div class="container">
 
-
 		<div class="row">
-			{{ world }}界
-		</div>
-		<div class="row">
-			境界: {{ levelTxt }}
-		</div>
-		<div class="row">
-			修為: {{ number }}
-		</div>
-		<div class="row">
-			每秒增加 {{ pointPerSec }} 修為
+            <div class="col-md-12 page-header text-center">
+ 				<h1>修真點擊</h1>
+			</div>
 		</div>
 
 		<div class="row">
-			 <button class="btn btn-default" v-on:click="_addByBody">修練</button>
-		</div>
 
-		<div class="row">
-			靈根: {{ talentTxt }}
-			<button class="btn btn-default" v-on:click="_talentLvUp" :disabled="!talentAble">
-			升級</button>
-			需要 {{ talentNeed }} 修為
-		</div>
-		<div class="row">
-			身體: {{ bodyTxt }} 每次修練增加 {{ bodyNum }} 修為。
-			<button class="btn btn-default" v-on:click="_bodyLvUp" :disabled="!bodyAble">
-			升級</button>
-			需要 {{ bodyNeed }} 修為
-		</div>
-		<div class="row">
-			功法: {{ skillName }}
-		</div>
-		<div class="row">
-			法寶: 無
-		</div>
 
+            <div class="col-sm-6 col-md-8 col-sm-offset-3 col-md-offset-2 text-center">
+            
+				<div class="row">
+	            	<div class="col-md-4 text-left"><h2>{{ world }}界</h2></div>
+					<div class="col-md-4 text-center">
+						<h1>修為: {{ number }}</h1>
+					</div>
+	            	<div class="col-md-4 text-right"><h3>{{ levelTxt }} 境界</h3></div>
+				</div> 
+				<div class="row">
+			 		<button class="btn btn-lg btn-default" v-on:click="_addByBody" style="font-size: 200%;">修練</button>
+				</div> 
+				<hr/>
+
+				<table class="table  table-bordered table-condensed"> 
+					<tr>
+						<td>名稱</td><td>能力</td><td>升級需求</td><td> </td>
+					</tr>
+					<tr><td colspan="4" class="text-left">身體</td></tr>
+					<tr>
+					<tr>
+						<td><h4>{{ bodyTxt }}</h4></td>
+						<td>每次修練增加 {{ bodyNum }} 修為</td>
+						<td>{{ bodyNeed }} 修為</td>
+						<td>
+							<button class="btn btn-default" v-on:click="_bodyLvUp" :disabled="!bodyAble"> 升級</button>
+						</td>
+					</tr>
+					<tr><td colspan="4" class="text-left">靈根</td></tr>
+					<tr>
+						<td><h4>{{ talentTxt }}</h4></td>
+						<td>可修練 {{ talentNum }} 項功法</td>
+						<td>{{ talentNeed }} 修為</td>
+						<td>
+							<button class="btn btn-default" v-on:click="_talentLvUp" :disabled="!talentAble">升級</button>
+						</td>
+					</tr>
+					<tr><td colspan="4" class="text-left">功法：0  {{ skillName }}</td></tr>
+					<tr><td colspan="4" class="text-left">法寶：0</td></tr>
+				</table>
+ 	
+				<div class="row text-right">
+					每秒增加 {{ pointPerSec }} 修為
+				</div> 
+
+			</div>
+		</div>
+  
 		</div>
 	</div>
 
-	<script src='js/bignumber.min.js'></script>
+    <script type="text/javascript" src="js/bootstrap/bootstrap.min.js"></script>
+	<script type="text/javascript" src='js/bignumber.min.js'></script>
 
     <script src="js/level.js"> </script>
     <script src="js/skill.js"> </script>    

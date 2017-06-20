@@ -21,6 +21,7 @@ var app = new Vue({
 		number : 0,
 		levelTxt : level._0.name,
 		talentTxt: talent._0.name,
+		talentNum : talent._0.num.toString(),
 		talentNeed: talent._0.need.toString(),
 		talentAble: false,
 		bodyTxt : body._0.name,
@@ -61,6 +62,7 @@ var app = new Vue({
 				app.point = app.point.minus( app.talent.need );
 				app.talent = app.talent.getNext();
 				app.talentTxt = app.talent.name;
+				app.talentNum = app.talent.num.toString();
 				app.talentNeed = app.talent.need.toString();
 			}
 		},
