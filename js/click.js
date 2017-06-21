@@ -160,8 +160,12 @@ var app = new Vue({
 				app.items = [];
 			}
 
-			var leftSkill = app.skills[ Math.floor( Math.random() * app.skills.length ) ];
-			app.skills = [ leftSkill ];
+			if( app.skills.length > 0 ){
+				var leftSkill = app.skills[ Math.floor( Math.random() * app.skills.length ) ];
+				app.skills = [ leftSkill ];
+			}else{
+				app.skills = [ ];
+			}
 
 			app.logTxt.push("境界圓滿，破碎虛空！超脫當前世界進入"+app.world+"界！");
 		}
