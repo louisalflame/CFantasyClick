@@ -30,7 +30,10 @@
 					<div class="col-md-4 text-center">
 			 			<button class="btn btn-lg btn-default" v-on:click="_addByBody" style="font-size: 200%;">修練</button>
 					</div>
-	            	<div class="col-md-4 text-right"><h3>{{ level.name }} 境界</h3></div>
+	            	<div class="col-md-4 text-right">
+	            		<h3>{{ level.name }} 境界</h3>
+	            		{{ level.max.toString() }}
+	            	</div>
 				</div> 
 				<hr>
 

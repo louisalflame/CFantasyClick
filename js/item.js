@@ -120,49 +120,6 @@ var items = [
 		start: () => { },
 		getPointPerSec: () => { return new BigNumber(2).pow( app.items.length ).round() ; },
 	},
-	{
-		info: "每秒可獲得功力最低的功法所修練的修為",
-		useAble: false,
-		start: () => { },
-		getPointPerSec: () => {
-			if( app.skills.length == 0 ){ return; }
-			var num = app.skills[0].object.num.times( app.skills[0].weight );
-			for( s of app.skills ){
-				if( s.object.num.times( s.weight ).lessThan(num) ){
-					num = s.object.num.times( s.weight );
-				}
-			}
-			return num;
-		},
-	},
-	//負面	
-	{
-		info: "道種魔心，會每秒衰減修練十次的修為",
-		useAble: false,
-		start: () => { },
-		getPointPerSec: () => { return app.body.num.times(-1) ; },
-	},
-	{
-		info: "入魔之人會衰減等同境界容量之萬分之一的修為",
-		useAble: false,
-		start: () => { },
-		getPointPerSec: () => { return app.level.max.div(100000).round(),times(-1); },
-	},
-	{
-		info: "逆行天道，會衰退功力最高的功法所修練的修為",
-		useAble: false,
-		start: () => { },
-		getPointPerSec: () => { 
-			if( app.skills.length == 0 ){ return; }
-			var num = new BigNumber(0);
-			for( s of app.skills ){
-				if( s.object.num.times( s.weight ).greaterThan(num) ){
-					num = s.object.num.times( s.weight );
-				}
-			}
-			return num.times(-1);
-		},
-	},
 ];
 
 function getRandomItem(){
