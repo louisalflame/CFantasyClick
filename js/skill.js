@@ -50,7 +50,7 @@ var skill = {
 	_8 : {
 		degree: "宗師",
 		num: new BigNumber(10).pow(7),
-		need: new BigNumber(10).pow(10),
+		need: new BigNumber(10).pow(16),
 		getNext: () => { return null },
 	},
 };
