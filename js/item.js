@@ -1,6 +1,30 @@
 var items = [
 	// 使用類
 	{
+		info: "直接獲得些微的修為",
+		useAble: true,
+		start: () => { app.point = app.point.plus( app.level.max.div(1000).round() ); },
+		getPointPerSec: () => { return 0; },
+	},
+	{
+		info: "直接獲得少量的修為",
+		useAble: true,
+		start: () => { app.point = app.point.plus( app.level.max.div(100).round() ); },
+		getPointPerSec: () => { return 0; },
+	},
+	{
+		info: "直接獲得不少的修為",
+		useAble: true,
+		start: () => { app.point = app.point.plus( app.level.max.div(10).round() ); },
+		getPointPerSec: () => { return 0; },
+	},
+	{
+		info: "直接獲得大量的修為",
+		useAble: true,
+		start: () => { app.point = app.point.plus( app.level.max.div(5).round() ); },
+		getPointPerSec: () => { return 0; },
+	},
+	{
 		info: "直接獲得當前境界一半容量的修為",
 		useAble: true,
 		start: () => { app.point = app.point.plus( app.level.max.div(2).round() ); },
@@ -97,6 +121,54 @@ var items = [
 	},
 	// 常駐類
 	{
+		info: "每秒獲得些微的修為",
+		useAble: false,
+		start: () => { },
+		getPointPerSec: () => { return new BigNumber(1); },
+	},
+	{
+		info: "每秒獲得少許的修為",
+		useAble: false,
+		start: () => { },
+		getPointPerSec: () => { return new BigNumber(2); },
+	},
+	{
+		info: "每秒獲得固定的修為",
+		useAble: false,
+		start: () => { },
+		getPointPerSec: () => { return new BigNumber(3); },
+	},
+	{
+		info: "每秒獲得不少的修為",
+		useAble: false,
+		start: () => { },
+		getPointPerSec: () => { return new BigNumber(5); },
+	},
+	{
+		info: "每秒獲得不錯的修為",
+		useAble: false,
+		start: () => { },
+		getPointPerSec: () => { return new BigNumber(10); },
+	},
+	{
+		info: "每秒獲得等同修練一次的修為",
+		useAble: false,
+		start: () => { },
+		getPointPerSec: () => { return app.body.num.div(10).round(); },
+	},
+	{
+		info: "每秒獲得等同修練兩次的修為",
+		useAble: false,
+		start: () => { },
+		getPointPerSec: () => { return app.body.num.times(2).div(10).round(); },
+	},
+	{
+		info: "每秒獲得等同修練五次的修為",
+		useAble: false,
+		start: () => { },
+		getPointPerSec: () => { return app.body.num.times(5).div(10).round(); },
+	},
+	{
 		info: "每秒獲得等同修練十次的修為",
 		useAble: false,
 		start: () => { },
@@ -118,7 +190,32 @@ var items = [
 		info: "每秒可獲得依法寶數量而增加的修為",
 		useAble: false,
 		start: () => { },
-		getPointPerSec: () => { return new BigNumber(2).pow( app.items.length ).round() ; },
+		getPointPerSec: () => { return new BigNumber(2).pow( app.items.length ).div( new BigNumber( app.items.length ).pow(2) ).round() ; },
+	},
+	{
+		info: "每秒可獲得依功法數量而增加的修為",
+		useAble: false,
+		start: () => { },
+		getPointPerSec: () => { return new BigNumber(2).pow( app.skills.length ).round() ; },
+	},
+	// 負面
+	{
+		info: "倦怠之心會緩慢衰退修為",
+		useAble: false,
+		start: () => { },
+		getPointPerSec: () => { return new BigNumber(-1); },
+	}, 
+	{
+		info: "入魔之身會快速衰退修為",
+		useAble: false,
+		start: () => { },
+		getPointPerSec: () => { return new BigNumber(-2); },
+	},
+	{
+		info: "逆天之行會急遽衰退修為",
+		useAble: false,
+		start: () => { },
+		getPointPerSec: () => { return new BigNumber(-3); },
 	},
 ];
 

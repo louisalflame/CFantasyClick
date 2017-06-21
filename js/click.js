@@ -162,6 +162,11 @@ var app = new Vue({
 
 			if( app.skills.length > 0 ){
 				var leftSkill = app.skills[ Math.floor( Math.random() * app.skills.length ) ];
+				leftSkill.level = 0;
+				leftSkill.weight = 1;
+				if( leftSkill.object.getPrev() != null ){
+					leftSkill.object = leftSkill.object.getPrev();
+				}
 				app.skills = [ leftSkill ];
 			}else{
 				app.skills = [ ];
