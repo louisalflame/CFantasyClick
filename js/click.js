@@ -144,6 +144,7 @@ var app = new Vue({
 		_gotoNextWorld: () => {
 			app.worldTimes += 1;
 			app.world = randomWorldName();
+			app.itemCost = new BigNumber(10000).times( new BigNumber(1.1).pow(app.worldTimes) ).round();
 
 			app.point = new BigNumber(0);
 			app.pointPerSec = new BigNumber(0);
