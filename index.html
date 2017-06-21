@@ -85,7 +85,7 @@
 						(以當前境界一半修為作根基，耗費九成修為只為機緣)
 						</td>
 						<td colspan="2" class="text-center">							
-							<button class="btn btn-default" v-on:click="_getNewItem" :disabled="point.lessThan( level.max.div(10) ) || point.lessThan(10000)"> 尋找機緣</button>
+							<button class="btn btn-default" v-on:click="_getNewItem" :disabled="point.lessThan( level.max.div(10) ) || point.lessThan(itemCost)"> 尋找機緣</button>
 						</td>
 					</tr> 
 					<tr v-for="(i, id) in items">>

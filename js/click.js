@@ -18,6 +18,7 @@ var app = new Vue({
 
 		skills : [],
 		items : [],
+		itemCost : new BigNumber(10000),
 
 		// 顯示用
 		world : "基礎",
@@ -94,8 +95,9 @@ var app = new Vue({
 		},
 		_getNewItem: () => {
 			if( !( app.point.lessThan( app.level.max.div(10) ) ) && 
-				!( app.point.lessThan(10099) ) ){
+				!( app.point.lessThan(app.itemCost) ) ){
 				app.point = app.point.div( 10 ).round();
+				app.itemCost  = app.itemCost.times(1.1).round();
 
 				var randName = randomItemName();
 				var _item = getRandomItem();
@@ -164,8 +166,10 @@ var app = new Vue({
 				var leftSkill = app.skills[ Math.floor( Math.random() * app.skills.length ) ];
 				leftSkill.level = 0;
 				leftSkill.weight = 1;
-				if( leftSkill.object.getPrev() != null ){
-					leftSkill.object = leftSkill.object.getPrev();
+				for(var i = 0; i < 4; i++){
+					if( leftSkill.object.getPrev() != null ){
+						leftSkill.object = leftSkill.object.getPrev();
+					}
 				}
 				app.skills = [ leftSkill ];
 			}else{

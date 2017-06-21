@@ -190,7 +190,7 @@ var items = [
 		info: "每秒可獲得依法寶數量而增加的修為",
 		useAble: false,
 		start: () => { },
-		getPointPerSec: () => { return new BigNumber(2).pow( app.items.length ).div( new BigNumber( app.items.length ).pow(2) ).round() ; },
+		getPointPerSec: () => { return app.level.max.div(1000000).times( app.items.length ).round(); },
 	},
 	{
 		info: "每秒可獲得依功法數量而增加的修為",
