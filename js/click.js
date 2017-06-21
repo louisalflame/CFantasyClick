@@ -148,7 +148,6 @@ var app = new Vue({
 			app.point = new BigNumber(0);
 			app.pointPerSec = new BigNumber(0);
 			app.level = level._0;
-			app.talent = talent._0;
 			app.body = body._0; 
 
 			var tmpItems = [];
@@ -172,8 +171,10 @@ var app = new Vue({
 					}
 				}
 				app.skills = [ leftSkill ];
+				app.talent = talent._1;
 			}else{
 				app.skills = [ ];
+				app.talent = talent._0;
 			}
 
 			app.logTxt.push("境界圓滿，破碎虛空！超脫當前世界進入"+app.world+"界！");
