@@ -11,25 +11,19 @@ var app = new Vue({
 		// 點數
 		worldTimes : 0,
 		point : new BigNumber(0.0),
-		pointPerSec: new BigNumber( 10),
+		pointPerSec: new BigNumber(0.0),
 		level : level._0,
 		talent: talent._0,
 		body : body._0,
 
+		skills : [],
+		items : [],
+
 		// 顯示用
 		world : "基礎",
 		number : 0,
-		levelTxt : level._0.name,
-		talentTxt: talent._0.name,
-		talentNum : talent._0.num.toString(),
-		talentNeed: talent._0.need.toString(),
-		talentAble: false,
-		bodyTxt : body._0.name,
-		bodyNum: body._0.num.toString(),
-		bodyNeed: body._0.need.toString(),
-		bodyAble: false,
-
-		skillName: randomSkillName(),
+ 
+ 		logTxt: [], 
 	},
 	methods: {
 		// 讀秒器
@@ -55,24 +49,70 @@ var app = new Vue({
 			app.point = app.point.plus( app.body.num );
 		},
 		_countAutoAdd: () => {
-			app.point = app.point.plus(1 );
+			app._countPointPerSec();
+			app.point = app.point.plus( app.pointPerSec );
 		},
 		_talentLvUp: () => {
-			if( app.point.greaterThan( app.talent.need ) ){
+			if( !app.point.lessThan( app.talent.need ) ){
 				app.point = app.point.minus( app.talent.need );
 				app.talent = app.talent.getNext();
-				app.talentTxt = app.talent.name;
-				app.talentNum = app.talent.num.toString();
-				app.talentNeed = app.talent.need.toString();
+
+				app.logTxt.push("靈根提升！升級為"+app.talent.name+"！");
 			}
 		},
 		_bodyLvUp: () => {
-			if( app.point.greaterThan( app.body.need ) ){
+			if( !app.point.lessThan( app.body.need ) ){
 				app.point = app.point.minus( app.body.need );
 				app.body = app.body.getNext();
-				app.bodyTxt = app.body.name;
-				app.bodyNum = app.body.num.toString();
-				app.bodyNeed = app.body.need.toString();
+
+				app.logTxt.push("肉體強化！脫胎為"+app.body.name+"！");
+			}
+		},
+		_skillLvUp: ( i ) => {
+			if( !app.point.lessThan( app.skills[i].object.need.times( app.skills[i].weight ) ) ){
+				app.point = app.point.minus( app.skills[i].object.need.times( app.skills[i].weight ) );
+				app.skills[i].object = app.skills[i].object.getNext();
+
+				app.logTxt.push("潛心修練"+app.skills[i].name+"，功力提升！");
+			}
+		},
+		_getNewSkill: () => {
+			if( app.talent.num.greaterThan( app.skills.length ) &&
+				!app.point.lessThan( app.level.max.div(2) ) ){
+				app.point = app.point.div( app.skills.length+2 ).round();
+
+				var randName = randomSkillName();
+				app.skills.push( {
+					name  : randName,
+					object: skill._0,
+					level : app.skills.length,
+					weight: new BigNumber(app.skills.length+1).pow(2),
+				} );
+
+				app.logTxt.push(randomNewSkillLog(randName)+"！");
+			}
+		},
+		_getNewItem: () => {
+			if( !( app.point.lessThan( app.level.max.div(10) ) ) && 
+				!( app.point.lessThan(10099) ) ){
+				app.point = app.point.div( 10 ).round();
+
+				var randName = randomItemName();
+				var _item = getRandomItem();
+				var newItem = {
+					name  : randName,
+					object: _item,
+					used  : !_item.useAble,
+				};
+
+				app.logTxt.push(randomNewItemLog(randName)+"！");
+				app.items.push( newItem );
+			}
+		},
+		_useItem: (id) => {
+			if( app.items[id].object.useAble && !app.items[id].used ){	
+				app.items[id].used = true;			
+				app.items[id].object.start();
 			}
 		},
 		// 顯示用
@@ -85,12 +125,19 @@ var app = new Vue({
 	        		break;
 	        	}
 	        	app.level = app.level.getNext();
-	        	app.levelTxt = app.level.name;
+
+	        	app.logTxt.push("修為積累，境界突破！進入"+app.level.name+"階段！");
 	        }
 
-	        app.bodyAble = app.point.greaterThan( app.body.need );
-	        app.talentAble = app.point.greaterThan( app.talent.need );
-
+		},
+		_countPointPerSec: () => {
+			app.pointPerSec = new BigNumber(0);
+			for( s of app.skills ){
+				app.pointPerSec = app.pointPerSec.plus( s.object.num.times( s.weight ) );
+			}
+			for( i of app.items ){ 
+				app.pointPerSec = app.pointPerSec.plus( i.object.getPointPerSec() );
+			}
 		},
 		_gotoNextWorld: () => {
 			app.worldTimes += 1;
@@ -100,15 +147,23 @@ var app = new Vue({
 			app.pointPerSec = new BigNumber(0);
 			app.level = level._0;
 			app.talent = talent._0;
-			app.body = body._0;
+			app.body = body._0; 
 
-			app.number = app.point.toString();
-			app.levelTxt = app.level.name;
-			app.talentTxt = app.talent.name;
-			app.talentNeed = app.talent.need.toString();
-			app.bodyTxt = app.body.name;
-			app.bodyNum = app.body.num.toString();
-			app.bodyNeed = app.body.need.toString();
+			var tmpItems = [];
+			for( i of app.items ){
+				if( !i.used || !i.object.useAble ){ tmpItems.push(i); }
+			}
+			if( tmpItems.length > 0 ){			
+				var leftItem = tmpItems[ Math.floor( Math.random() * tmpItems.length ) ];
+				app.items = [ leftItem ];
+			}else{
+				app.items = [];
+			}
+
+			var leftSkill = app.skills[ Math.floor( Math.random() * app.skills.length ) ];
+			app.skills = [ leftSkill ];
+
+			app.logTxt.push("境界圓滿，破碎虛空！超脫當前世界進入"+app.world+"界！");
 		}
 	},
 });

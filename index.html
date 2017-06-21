@@ -18,58 +18,94 @@
         <div class="container">
 
 		<div class="row">
-            <div class="col-md-12 page-header text-center">
- 				<h1>修真點擊</h1>
-			</div>
-		</div>
-
-		<div class="row">
-
-
             <div class="col-sm-6 col-md-8 col-sm-offset-3 col-md-offset-2 text-center">
             
 				<div class="row">
-	            	<div class="col-md-4 text-left"><h2>{{ world }}界</h2></div>
-					<div class="col-md-4 text-center">
-						<h1>修為: {{ number }}</h1>
-					</div>
-	            	<div class="col-md-4 text-right"><h3>{{ levelTxt }} 境界</h3></div>
+						<h1>修為: {{ point.toString() }}</h1>
 				</div> 
 				<div class="row">
-			 		<button class="btn btn-lg btn-default" v-on:click="_addByBody" style="font-size: 200%;">修練</button>
+	            	<div class="col-md-4 text-left">
+	            		第{{ worldTimes }}重天 <h2>{{ world }}界</h2>
+	            	</div>
+					<div class="col-md-4 text-center">
+			 			<button class="btn btn-lg btn-default" v-on:click="_addByBody" style="font-size: 200%;">修練</button>
+					</div>
+	            	<div class="col-md-4 text-right"><h3>{{ level.name }} 境界</h3></div>
 				</div> 
-				<hr/>
+				<hr>
 
-				<table class="table  table-bordered table-condensed"> 
+				<table id="info" class="table  table-bordered table-condensed">
+				<tbody> 
 					<tr>
 						<td>名稱</td><td>能力</td><td>升級需求</td><td> </td>
 					</tr>
 					<tr><td colspan="4" class="text-left">身體</td></tr>
 					<tr>
 					<tr>
-						<td><h4>{{ bodyTxt }}</h4></td>
-						<td>每次修練增加 {{ bodyNum }} 修為</td>
-						<td>{{ bodyNeed }} 修為</td>
+						<td><h4>{{ body.name }}</h4></td>
+						<td>每次修練增加 {{ body.num.toString() }} 修為</td>
+						<td>{{ body.need.toString() }} 修為</td>
 						<td>
-							<button class="btn btn-default" v-on:click="_bodyLvUp" :disabled="!bodyAble"> 升級</button>
+							<button class="btn btn-default" v-on:click="_bodyLvUp" :disabled="point.lessThan( body.need )"> 升級</button>
 						</td>
 					</tr>
 					<tr><td colspan="4" class="text-left">靈根</td></tr>
 					<tr>
-						<td><h4>{{ talentTxt }}</h4></td>
-						<td>可修練 {{ talentNum }} 項功法</td>
-						<td>{{ talentNeed }} 修為</td>
+						<td><h4>{{ talent.name }}</h4></td>
+						<td>可修練 {{ talent.num.toString() }} 項功法</td>
+						<td>{{ talent.need.toString() }} 修為</td>
 						<td>
-							<button class="btn btn-default" v-on:click="_talentLvUp" :disabled="!talentAble">升級</button>
+							<button class="btn btn-default" v-on:click="_talentLvUp" :disabled="point.lessThan( talent.need )">升級</button>
 						</td>
 					</tr>
-					<tr><td colspan="4" class="text-left">功法：0  {{ skillName }}</td></tr>
-					<tr><td colspan="4" class="text-left">法寶：0</td></tr>
+					<tr id="skillRow">
+						<td colspan="2" class="text-left">
+						功法：{{ skills.length }}項 
+						(以當前境界一半修為作根基，所學越多再學新功法耗費越大)
+						</td>
+						<td colspan="2" class="text-center">							
+							<button class="btn btn-default" v-on:click="_getNewSkill" :disabled="point.lessThan( level.max.div(2) ) || !talent.num.greaterThan( skills.length )">學習新功法</button>
+						</td>
+					</tr>
+					<tr v-for="(skill, id) in skills">
+						<td><h5> {{ skill.name }} - {{ skill.object.degree }} </h5></td> 
+						<td> 每秒增加 
+						{{ skill.object.num.times( 10 ).times( skill.weight ).toString() }} 修為</td> 
+						<td> {{ skill.object.need.times( skill.weight ).toString() }} 修為</td> 
+						<td>
+							<button class="btn btn-default" v-on:click="_skillLvUp(id)" :disabled="point.lessThan( skill.object.need.times( skill.weight ) )">升級</button>
+						</td>
+					</tr>
+					<tr id="itemRow">
+						<td colspan="2" class="text-left">
+						法寶：{{ items.length }}個
+						(以當前境界一半修為作根基，耗費九成修為只為機緣)
+						</td>
+						<td colspan="2" class="text-center">							
+							<button class="btn btn-default" v-on:click="_getNewItem" :disabled="point.lessThan( level.max.div(10) ) || point.lessThan(10000)"> 尋找機緣</button>
+						</td>
+					</tr> 
+					<tr v-for="(i, id) in items">>
+						<td><h5> {{ i.name }} </h5></td> 
+						<td colspan="2" class="text-left"> {{ i.object.info }} </td>
+						<td>
+							<button class="btn btn-default" v-on:click="_useItem(id)" :disabled="i.used || !i.object.useAble "> 使用 </button>
+						</td>
+					</tr>
+				</tbody>
 				</table>
  	
 				<div class="row text-right">
-					每秒增加 {{ pointPerSec }} 修為
+					每秒增加 {{ pointPerSec.times( 10 ).toNumber() }} 修為
 				</div> 
+				<hr/>
+
+				<div class="text-left" style=" height:300px;  overflow: scroll;">
+					<p v-for="t in logTxt">
+			  			{{ t }}
+			  		</p>
+				</div>
+				<hr/>
 
 			</div>
 		</div>
@@ -77,11 +113,13 @@
 		</div>
 	</div>
 
+	<script type="text/javascript" src='js/jquery-1.11.0.min.js'></script>
     <script type="text/javascript" src="js/bootstrap/bootstrap.min.js"></script>
 	<script type="text/javascript" src='js/bignumber.min.js'></script>
 
     <script src="js/level.js"> </script>
-    <script src="js/skill.js"> </script>    
+    <script src="js/skill.js"> </script>
+    <script src="js/item.js"> </script>    
     <script src="js/nameMaker.js"> </script>
 
     <!-- Vue Core JavaScript --> 
