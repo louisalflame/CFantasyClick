@@ -147,7 +147,7 @@ var app = new Vue({
 					name  : randName,
 					object: skill._0,
 					level : app.skills.length,
-					weight: new BigNumber(app.skills.length+1).pow(2),
+					weight: new BigNumber(app.skills.length+1),
 				} );
 
 				app.logTxt.splice(0, 0, randomNewSkillLog(randName)+"！");
