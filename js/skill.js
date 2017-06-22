@@ -34,7 +34,7 @@ var skill = {
 	_4 : {
 		degree: "進階",
 		num: new BigNumber(111),
-		need: new BigNumber(10).pow(6),
+		need: new BigNumber(10).pow(7),
 		top: false,
 		getPrev: () => { return skill._3 },
 		getNext: () => { return skill._5 },
@@ -42,7 +42,7 @@ var skill = {
 	_5 : {
 		degree: "精通",
 		num: new BigNumber(1024),
-		need: new BigNumber(10).pow(7),
+		need: new BigNumber(10).pow(9),
 		top: false,
 		getPrev: () => { return skill._4 },
 		getNext: () => { return skill._6 },
@@ -50,7 +50,7 @@ var skill = {
 	_6 : {
 		degree: "高手",
 		num: new BigNumber(7007),
-		need: new BigNumber(10).pow(8),
+		need: new BigNumber(10).pow(11),
 		top: false,
 		getPrev: () => { return skill._5 },
 		getNext: () => { return skill._7 },
@@ -58,7 +58,7 @@ var skill = {
 	_7 : {
 		degree: "大師",
 		num: new BigNumber(10).pow(5),
-		need: new BigNumber(10).pow(10),
+		need: new BigNumber(10).pow(13),
 		top: false,
 		getPrev: () => { return skill._6 },
 		getNext: () => { return skill._8 },
