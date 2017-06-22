@@ -92,3 +92,4 @@ var randomNewItemLog = function(randName){
 	else if( rand < 0.8 ) { return "在二手拍賣市場撿漏，慧眼獨具買到"+randName; }
 	else { return "隨身系統的拉霸機中大獎！獲得"+randName; }
 }
+ 

@@ -3,10 +3,50 @@ var point = new BigNumber(0.0);
 var app = new Vue({ 
 	el: '#app',
 	data: {
+		// Css
+		backCss : {
+			background: '#333333',
+		},
+		centerCss : {
+			background: '#efefef',
+		},
+		tableCss : {
+			width : '95%',
+			margin : 'auto',
+			background: '#ffffff',
+		},
+		tableRowCss : {
+			background: '#888888',
+		},
+		Tr0css : {
+			color: '#e6ffff',
+			fontSize: '120%',
+			'font-weight': 'bold',
+			background: '#000066',
+		},
+		Tr1css : {
+			background: '#e6e6ff',
+		},
+		Tr2css : {
+			background: '#e6ffd6',
+		},
+		Tr3css : {
+			background: '#ffffd6',
+		},
+		Tr4css : {
+			background: '#f2d6ff',
+		},
+
+
+
 		// 讀秒器
 		timerId : null,
 		fpsInterval : 100,
 		then : 0,
+
+		secInterval : 1000,
+		secThen : 0,
+		wait : 10,
 
 		// 點數
 		worldTimes : 0,
@@ -18,13 +58,25 @@ var app = new Vue({
 
 		skills : [],
 		items : [],
+		itemWait : new BigNumber(10),
 		itemCost : new BigNumber(10000),
 
 		// 顯示用
 		world : "基礎",
 		number : 0,
  
- 		logTxt: [], 
+ 		logTxt: [],  
+ 		numFilter: { 
+ 			txt: (str) => {
+ 				var rev = str.split('').reverse().join('');
+
+	 			var ret = []; 
+	 			for(i = 0; i < rev.length; i += 3 ){
+	 				ret.push( rev.substr( i, 3) );
+	 			}
+	 			return ret.join(',').split('').reverse().join('');
+ 			} 
+ 		},
 	},
 	methods: {
 		// 讀秒器
@@ -40,10 +92,18 @@ var app = new Vue({
 	            app.then = now - (elapsed % app.fpsInterval);
 
 	            app._countAutoAdd();
+				app._show();
+	        }
+
+	        var secElapsed = now - app.secThen;
+	        if( secElapsed > app.secInterval ){
+	            app.secThen = now - (secElapsed % app.secInterval);
+ 				
+ 				app.wait -= 1;
+ 				if( app.wait < 0 ) { app.wait = 0; } 
 	        }
 
 			app.timerId = window.requestAnimationFrame( app._timer );
-			app._show();
 		},
 		// 點數
 		_addByBody: () => {
@@ -58,7 +118,7 @@ var app = new Vue({
 				app.point = app.point.minus( app.talent.need );
 				app.talent = app.talent.getNext();
 
-				app.logTxt.push("靈根提升！升級為"+app.talent.name+"！");
+				app.logTxt.splice(0, 0, "靈根提升！升級為"+app.talent.name+"！");
 			}
 		},
 		_bodyLvUp: () => {
@@ -66,7 +126,7 @@ var app = new Vue({
 				app.point = app.point.minus( app.body.need );
 				app.body = app.body.getNext();
 
-				app.logTxt.push("肉體強化！脫胎為"+app.body.name+"！");
+				app.logTxt.splice(0, 0, "肉體強化！脫胎為"+app.body.name+"！");
 			}
 		},
 		_skillLvUp: ( i ) => {
@@ -74,7 +134,7 @@ var app = new Vue({
 				app.point = app.point.minus( app.skills[i].object.need.times( app.skills[i].weight ) );
 				app.skills[i].object = app.skills[i].object.getNext();
 
-				app.logTxt.push("潛心修練"+app.skills[i].name+"，功力提升！");
+				app.logTxt.splice(0, 0, "潛心修練"+app.skills[i].name+"，功力提升！");
 			}
 		},
 		_getNewSkill: () => {
@@ -90,14 +150,16 @@ var app = new Vue({
 					weight: new BigNumber(app.skills.length+1).pow(2),
 				} );
 
-				app.logTxt.push(randomNewSkillLog(randName)+"！");
+				app.logTxt.splice(0, 0, randomNewSkillLog(randName)+"！");
 			}
 		},
 		_getNewItem: () => {
-			if( !( app.point.lessThan( app.level.max.div(10) ) ) && 
-				!( app.point.lessThan(app.itemCost) ) ){
+			if( !( app.point.lessThan( app.level.max.div(2) ) ) && 
+				!( app.point.lessThan( app.itemCost ) ) ){
 				app.point = app.point.div( 10 ).round();
-				app.itemCost  = app.itemCost.times(1.1).round();
+				app.itemCost = app.itemCost.times(1.1).round();
+				app.itemWait = app.itemWait.plus(1);
+				app.wait = app.itemWait.toNumber();
 
 				var randName = randomItemName();
 				var _item = getRandomItem();
@@ -107,7 +169,7 @@ var app = new Vue({
 					used  : !_item.useAble,
 				};
 
-				app.logTxt.push(randomNewItemLog(randName)+"！");
+				app.logTxt.splice(0, 0, randomNewItemLog(randName)+"！");
 				app.items.push( newItem );
 			}
 		},
@@ -128,14 +190,14 @@ var app = new Vue({
 	        	}
 	        	app.level = app.level.getNext();
 
-	        	app.logTxt.push("修為積累，境界突破！進入"+app.level.name+"階段！");
+	        	app.logTxt.splice(0, 0, "修為積累，境界突破！進入"+app.level.name+"階段！");
 	        }
 
 		},
 		_countPointPerSec: () => {
 			app.pointPerSec = new BigNumber(0);
 			for( s of app.skills ){
-				app.pointPerSec = app.pointPerSec.plus( s.object.num.times( s.weight ) );
+				app.pointPerSec = app.pointPerSec.plus( s.object.num.times( app.talent.num ).times( s.weight ) );
 			}
 			for( i of app.items ){ 
 				app.pointPerSec = app.pointPerSec.plus( i.object.getPointPerSec() );
@@ -178,7 +240,7 @@ var app = new Vue({
 				app.talent = talent._0;
 			}
 
-			app.logTxt.push("境界圓滿，破碎虛空！超脫當前世界進入"+app.world+"界！");
+			app.logTxt.splice(0, 0, "境界圓滿，破碎虛空！超脫當前世界進入"+app.world+"界！");
 		}
 	},
 });

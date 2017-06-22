@@ -14,14 +14,15 @@
 
 <body>
 
-	<div id="app">
+	<div id="app" v-bind:style="backCss">
         <div class="container">
 
 		<div class="row">
-            <div class="col-sm-12 col-md-10 col-md-offset-1 text-center">
+            <div v-bind:style="centerCss" class="col-sm-12 col-md-10 col-md-offset-1 text-center">
             
+				<hr/>
 				<div class="row">
-						<h1>修為: {{ point.toString() }}</h1>
+						<h1>修為: {{ numFilter.txt( point.toString() ) }} </h1>
 				</div> 
 				<div class="row">
 	            	<div class="col-md-4 text-left">
@@ -32,60 +33,87 @@
 					</div>
 	            	<div class="col-md-4 text-right">
 	            		<h3>{{ level.name }} 境界</h3>
-	            		{{ level.max.toString() }}
-	            	</div>
+	            		{{ numFilter.txt( level.max.toString() ) }}
+						<p>每秒增加 {{ numFilter.txt( pointPerSec.times( 10 ).toString() ) }} 修為</p>
+	            	</div> 
 				</div> 
-				<hr>
+				<hr/>
 
-				<table id="info" class="table  table-bordered table-condensed">
+				<div class="row"  v-bind:style="tableRowCss">
+				<br/>
+				<table v-bind:style="tableCss" id="info" class="table table-bordered table-condensed">
 				<tbody> 
-					<tr>
+					<tr v-bind:style="Tr0css">
 						<td>名稱</td><td>能力</td><td>升級需求</td><td> </td>
 					</tr>
-					<tr><td colspan="4" class="text-left">身體</td></tr>
-					<tr>
+					<tr v-bind:style="Tr1css">
+						<td colspan="4" class="text-left">身體</td>
+					</tr>
 					<tr>
 						<td><h4>{{ body.name }}</h4></td>
-						<td>每次修練增加 {{ body.num.toString() }} 修為</td>
-						<td>{{ body.need.toString() }} 修為</td>
+						<td>每次修練增加 {{ numFilter.txt( body.num.toString() ) }} 修為</td>
 						<td>
-							<button class="btn btn-default" v-on:click="_bodyLvUp" :disabled="point.lessThan( body.need )"> 升級</button>
+							<template v-if="!body.top"> {{ numFilter.txt( body.need.toString() ) }} 修為</template>
+						</td>
+						<td>
+							<button class="btn btn-default" v-on:click="_bodyLvUp" :disabled="point.lessThan( body.need ) || body.top "> 升級</button>
 						</td>
 					</tr>
-					<tr><td colspan="4" class="text-left">靈根</td></tr>
+					<tr v-bind:style="Tr2css">
+						<td colspan="4" class="text-left">靈根</td>
+					</tr>
 					<tr>
 						<td><h4>{{ talent.name }}</h4></td>
 						<td>可修練 {{ talent.num.toString() }} 項功法</td>
-						<td>{{ talent.need.toString() }} 修為</td>
 						<td>
-							<button class="btn btn-default" v-on:click="_talentLvUp" :disabled="point.lessThan( talent.need )">升級</button>
+							<template v-if="!talent.top">
+							{{ numFilter.txt( talent.need.toString() ) }} 修為
+							</template>	
+						</td>
+						<td>
+							<button class="btn btn-default" v-on:click="_talentLvUp" :disabled="point.lessThan( talent.need ) || talent.top">升級</button>
 						</td>
 					</tr>
-					<tr id="skillRow">
-						<td colspan="2" class="text-left">
-						功法：{{ skills.length }}項 
-						(以當前境界一半修為作根基，所學越多再學新功法耗費越大)
+					<tr  v-bind:style="Tr3css" id="skillRow">
+						<td class="text-left"> 
+							功法：{{ skills.length }}項 
 						</td>
 						<td colspan="2" class="text-center">							
+							門檻需達 {{ numFilter.txt( level.max.div(2).toString() ) }} 修為，
+							消耗修為至{{skills.length+2}}分之一
+						</td>
+						<td>						
 							<button class="btn btn-default" v-on:click="_getNewSkill" :disabled="point.lessThan( level.max.div(2) ) || !talent.num.greaterThan( skills.length )">學習新功法</button>
 						</td>
 					</tr>
 					<tr v-for="(skill, id) in skills">
 						<td><h5> {{ skill.name }} - {{ skill.object.degree }} </h5></td> 
-						<td> 每秒增加 
-						{{ skill.object.num.times( 10 ).times( skill.weight ).toString() }} 修為</td> 
-						<td> {{ skill.object.need.times( skill.weight ).toString() }} 修為</td> 
+						<td> 
+							每秒增加 
+							{{ numFilter.txt( skill.object.num.times( talent.num ).times( 10 ).times( skill.weight ).toString() ) }} 修為
+						</td> 
+						<td> 
+							<template v-if="!skill.object.top">
+							{{ numFilter.txt( skill.object.need.times( skill.weight ).toString() ) }} 修為
+							</template>
+						</td>
 						<td>
-							<button class="btn btn-default" v-on:click="_skillLvUp(id)" :disabled="point.lessThan( skill.object.need.times( skill.weight ) )">升級</button>
+							<button class="btn btn-default" v-on:click="_skillLvUp(id)" :disabled="point.lessThan( skill.object.need.times( skill.weight ) ) || skill.object.top ">升級</button>
 						</td>
 					</tr>
-					<tr id="itemRow">
-						<td colspan="2" class="text-left">
+					<tr  v-bind:style="Tr4css" id="itemRow">
+						<td class="text-left">
 						法寶：{{ items.length }}個
-						(以當前境界一半修為作根基，耗費九成修為只為機緣)
 						</td>
-						<td colspan="2" class="text-center">							
-							<button class="btn btn-default" v-on:click="_getNewItem" :disabled="point.lessThan( level.max.div(10) ) || point.lessThan(itemCost)"> 尋找機緣</button>
+						<td colspan="2" class="text-center">
+							<template v-if="wait!=0">
+							下次秘境開啟 {{ wait }} 秒 ， 
+							</template>
+							門檻需達 {{ numFilter.txt( level.max.div(2).greaterThan( itemCost ) ? level.max.div(2).toString() : itemCost.toString() ) }} 修為，
+							消耗九成修為
+						</td>
+						<td class="text-center">							
+							<button class="btn btn-default" v-on:click="_getNewItem" :disabled="point.lessThan( level.max.div(2) ) || point.lessThan(itemCost) || wait!=0 "> 尋找機緣</button>
 						</td>
 					</tr> 
 					<tr v-for="(i, id) in items">>
@@ -97,13 +125,12 @@
 					</tr>
 				</tbody>
 				</table>
- 	
-				<div class="row text-right">
-					每秒增加 {{ pointPerSec.times( 10 ).toNumber() }} 修為
+				<br/>
 				</div> 
+ 	 
 				<hr/>
 
-				<div class="text-left" style=" height:300px;  overflow: scroll;">
+				<div  v-bind:style="tableCss" class="text-left" style=" height:300px;  overflow: scroll;">
 					<p v-for="t in logTxt">
 			  			{{ t }}
 			  		</p>

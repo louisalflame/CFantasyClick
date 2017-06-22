@@ -52,9 +52,9 @@ var items = [
 		info: "將肉體能力提升一個等級",
 		useAble: true,
 		start: () => { 
-			if( app.body.getNext() != null ){ 
+			if( !app.body.top ){ 
 				app.body = app.body.getNext(); 
-				app.logTxt.push("肉體強化！脫胎為"+app.body.name+"！");
+				app.logTxt.splice(0, 0, "肉體強化！脫胎為"+app.body.name+"！");
 			}
 		},
 		getPointPerSec: () => { return 0; },
@@ -63,9 +63,9 @@ var items = [
 		info: "將靈根提升一個等級",
 		useAble: true,
 		start: () => { 
-			if( app.talent.getNext() != null ){ 
+			if( !app.talent.top ){ 
 				app.talent = app.talent.getNext(); 
-				app.logTxt.push("靈根提升！升級為"+app.talent.name+"！");
+				app.logTxt.splice(0, 0, "靈根提升！升級為"+app.talent.name+"！");
 			}
 		},
 		getPointPerSec: () => { return 0; },
@@ -74,9 +74,9 @@ var items = [
 		info: "將境界直接提升一個等級",
 		useAble: true,
 		start: () => { 
-			if( app.level.getNext() != null ){ 
+			if( !app.level.top ){ 
 				app.level = app.level.getNext(); 
-	        	app.logTxt.push("修為積累，境界突破！進入"+app.level.name+"階段！");
+	        	app.logTxt.splice(0, 0, "修為積累，境界突破！進入"+app.level.name+"階段！");
 			}else{			
 	        	app._gotoNextWorld();
 			}
@@ -96,7 +96,7 @@ var items = [
 			}
 			if( app.skills[id].object.getNext() != null ){
 				app.skills[id].object = app.skills[id].object.getNext();
-				app.logTxt.push("潛心修練"+app.skills[id].name+"，功力提升！");
+				app.logTxt.splice(0, 0, "潛心修練"+app.skills[id].name+"，功力提升！");
 			}
 		},
 		getPointPerSec: () => { return 0; },
@@ -133,19 +133,19 @@ var items = [
 		getPointPerSec: () => { return new BigNumber(2); },
 	},
 	{
-		info: "每秒獲得固定的修為",
+		info: "每秒獲得一點點的修為",
 		useAble: false,
 		start: () => { },
 		getPointPerSec: () => { return new BigNumber(3); },
 	},
 	{
-		info: "每秒獲得不少的修為",
+		info: "每秒獲得不多的修為",
 		useAble: false,
 		start: () => { },
 		getPointPerSec: () => { return new BigNumber(5); },
 	},
 	{
-		info: "每秒獲得不錯的修為",
+		info: "每秒獲得一定量的修為",
 		useAble: false,
 		start: () => { },
 		getPointPerSec: () => { return new BigNumber(10); },
