@@ -22,14 +22,20 @@
             
 				<hr/>
 				<div class="row">
+						修道者：
+						<div v-if="born">
+							<input type="text" v-bind:style="nameCss" v-model="name">
+							<button class="btn btn-default" v-on:click="_setName">命名</button>
+						</div>
+						<span v-else>{{ name }}</span>
 						<h1>修為: {{ numFilter.txt( point.toString() ) }} </h1>
 				</div> 
 				<div class="row">
 	            	<div class="col-md-4 text-left">
-	            		第{{ worldTimes }}重天 <h2>{{ world }}界</h2>
+	            		第{{ worldTimes }}重天 <h2>{{ world[0] }}界</h2>
 	            	</div>
 					<div class="col-md-4 text-center">
-			 			<button class="btn btn-lg btn-default" v-on:click="_addByBody" style="font-size: 200%;">修練</button>
+			 			<button class="btn btn-lg btn-default" v-bind:style="buttonCss" v-on:click="_addByBody">修練</button>
 					</div>
 	            	<div class="col-md-4 text-right">
 	            		<h3>{{ level.name }} 境界</h3>
@@ -71,19 +77,23 @@
 							</template>	
 						</td>
 						<td>
-							<button class="btn btn-default" v-on:click="_talentLvUp" :disabled="point.lessThan( talent.need ) || talent.top">升級</button>
+							<button class="btn btn-default" v-on:click="_talentLvUp" :disabled="point.lessThan( talent.need ) || talent.top ">升級</button>
 						</td>
 					</tr>
 					<tr  v-bind:style="Tr3css" id="skillRow">
 						<td class="text-left"> 
 							功法：{{ skills.length }}項 
 						</td>
-						<td colspan="2" class="text-center">							
+						<td colspan="2" class="text-center">
+							<template v-if="talent.num.greaterThan( skills.length)">
 							門檻需達 {{ numFilter.txt( level.max.div(2).toString() ) }} 修為，
 							消耗修為至{{skills.length+2}}分之一
+							</template>	
 						</td>
-						<td>						
-							<button class="btn btn-default" v-on:click="_getNewSkill" :disabled="point.lessThan( level.max.div(2) ) || !talent.num.greaterThan( skills.length )">學習新功法</button>
+						<td>
+							<template v-if="talent.num.greaterThan( skills.length)">
+							<button class="btn btn-default" v-on:click="_getNewSkill" :disabled="point.lessThan( level.max.div(2) ) ">學習新功法</button>
+							</template>	
 						</td>
 					</tr>
 					<tr v-for="(skill, id) in skills">
@@ -120,7 +130,11 @@
 						<td><h5> {{ i.name }} </h5></td> 
 						<td colspan="2" class="text-left"> {{ i.object.info }} </td>
 						<td>
-							<button class="btn btn-default" v-on:click="_useItem(id)" :disabled="i.used || !i.object.useAble "> 使用 </button>
+							<div v-if="i.object.useAble">
+								<button class="btn btn-default" v-on:click="_useItem(id)"> 使用 </button>
+							</div>
+							<div v-else style="color:gray;"> 被動 </div>
+							
 						</td>
 					</tr>
 				</tbody>
@@ -130,32 +144,39 @@
  	 
 				<hr/>
 
-				<div  v-bind:style="tableCss" class="text-left" style=" height:300px;  overflow: scroll;">
+				<div v-bind:style="logCss" class="text-left" >
 					<p v-for="t in logTxt">
 			  			{{ t }}
 			  		</p>
 				</div>
 				<hr/>
 
+				<div>
+					<input id="data" v-bind:style="dataCss" type="text" v-model="record" >
+					<button class="btn btn-default" v-on:click="_showData">紀錄傳承</button>
+					<button class="btn btn-default" v-on:click="_loadData">接受傳承</button>
+				</div>
+
 			</div>
-		</div>
-  
+		</div>  
+
 		</div>
 	</div>
 
 	<script type="text/javascript" src='js/jquery-1.11.0.min.js'></script>
     <script type="text/javascript" src="js/bootstrap/bootstrap.min.js"></script>
 	<script type="text/javascript" src='js/bignumber.min.js'></script>
+	<script type="text/javascript" src='js/LZstring/lz-string.min.js'></script>
 
-    <script src="js/level.js"> </script>
-    <script src="js/skill.js"> </script>
-    <script src="js/item.js"> </script>    
-    <script src="js/nameMaker.js"> </script>
+    <script src="js/lib/level.js"> </script>
+    <script src="js/lib/skill.js"> </script>
+    <script src="js/lib/item.js"> </script>    
+    <script src="js/lib/nameMaker.js"> </script>
 
     <!-- Vue Core JavaScript --> 
     <script src="js/vue.js"> </script>
-	<script src="js/click.js" > </script>
-	<script src="js/timer.js"></script> 
+	<script src="js/lib/click.js" > </script>
+	<script src="js/lib/timer.js"></script> 
 
 </body>
 

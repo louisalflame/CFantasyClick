@@ -1,69 +1,95 @@
 var level = {
 	_0 : { 
+		id: 0,
 		name: "練體",
 		max:  new BigNumber(10).pow(3),
 		top: false,
 		getNext: () => { return level._1; },
 	},
 	_1 : { 
+		id: 1,
 		name: "練氣",
 		max:  new BigNumber(10).pow(4),
 		top: false,
 		getNext: () => { return level._2; },
 	},
 	_2 : { 
+		id: 2,
 		name: "築基",
 		max:  new BigNumber(10).pow(5),
 		top: false,
 		getNext: () => { return level._3; },
 	},
 	_3 : { 
+		id: 3,
 		name: "開光",
 		max:  new BigNumber(10).pow(6),
 		top: false,
 		getNext: () => { return level._4; },
 	},
 	_4 : { 
+		id: 4,
 		name: "結丹",
 		max:  new BigNumber(10).pow(7),
 		top: false,
 		getNext: () => { return level._5; },
 	},
 	_5 : { 
+		id: 5,
 		name: "元嬰",
 		max:  new BigNumber(10).pow(8),
 		top: false,
 		getNext: () => { return level._6; },
 	},
 	_6 : { 
+		id: 6,
 		name: "分神",
 		max:  new BigNumber(10).pow(9),
 		top: false,
 		getNext: () => { return level._7; },
 	},
 	_7 : { 
+		id: 7,
 		name: "化神",
 		max:  new BigNumber(10).pow(10),
 		top: false,
 		getNext: () => { return level._8; },
 	},
 	_8 : { 
+		id: 8,
 		name: "大乘",
 		max:  new BigNumber(10).pow(12),
 		top: false,
 		getNext: () => { return level._9; },
 	},
 	_9 : { 
+		id: 9,
 		name: "渡劫",
-		max:  new BigNumber(10).pow(14),
+		max:  new BigNumber(10).pow(15),
 		top: true,
 		getNext: () => { return null; },
+	},
+	find: (id) => {
+		switch(id){
+			default:
+			case 0: return level._0;
+			case 1: return level._1;
+			case 2: return level._2;
+			case 3: return level._3;
+			case 4: return level._4;
+			case 5: return level._5;
+			case 6: return level._6;
+			case 7: return level._7;
+			case 8: return level._8;
+			case 9: return level._9;
+		}
 	},
 };
 
 
 var body = {
 	_0 : {
+		id: 0,
 		name: "凡胎肉軀",
 		num: new BigNumber(1),
 		need: new BigNumber(10),
@@ -71,6 +97,7 @@ var body = {
 		getNext: () => { return body._1; },
 	},
 	_1 : {
+		id: 1,
 		name: "強身健體",
 		num: new BigNumber(5),
 		need: new BigNumber(400),
@@ -78,34 +105,39 @@ var body = {
 		getNext: () => { return body._2; },
 	},
 	_2 : {
+		id: 2,
 		name: "鋼筋鐵骨",
 		num: new BigNumber(10),
-		need: new BigNumber(1000),
+		need: new BigNumber(2000),
 		top: false,
 		getNext: () => { return body._3; },
 	},
 	_3 : {
+		id: 3,
 		name: "龍氣戰體",
 		num: new BigNumber(50),
-		need: new BigNumber(5000),
+		need: new BigNumber(10).pow(4),
 		top: false,
 		getNext: () => { return body._4; },
 	},	
 	_4 : {
+		id: 4,
 		name: "黃金血脈",
 		num: new BigNumber(200),
-		need: new BigNumber(10).pow(4),
+		need: new BigNumber(10).pow(4).times(8),
 		top: false,
 		getNext: () => { return body._5; },
 	},
 	_5 : {
+		id: 5,
 		name: "金剛不壞",
 		num: new BigNumber(1000),
-		need: new BigNumber(10).pow(5),
+		need: new BigNumber(10).pow(6),
 		top: false,
 		getNext: () => { return body._6; },
 	},
 	_6 : {
+		id: 6,
 		name: "傳說聖軀",
 		num: new BigNumber(10).pow(4),
 		need: new BigNumber(10).pow(7),
@@ -113,6 +145,7 @@ var body = {
 		getNext: () => { return body._7; },
 	},
 	_7 : {
+		id: 7,
 		name: "圓滿道體",
 		num: new BigNumber(10).pow(5),
 		need: new BigNumber(10).pow(9),
@@ -120,23 +153,41 @@ var body = {
 		getNext: () => { return body._8; },
 	},
 	_8 : {
+		id: 8,
 		name: "不滅法身",
 		num: new BigNumber(10).pow(7),
-		need: new BigNumber(10).pow(11),
+		need: new BigNumber(10).pow(12),
 		top: false,
 		getNext: () => { return body._9; },
 	},
 	_9 : {
+		id: 9,
 		name: "天上地下唯我獨尊",
-		num: new BigNumber(10).pow(9),
+		num: new BigNumber(10).pow(10),
 		need: new BigNumber(10).pow(16),		
 		top: true,
 		getNext: () => { return null; },
+	},
+	find: (id) => {
+		switch(id){
+			default:
+			case 0: return body._0;
+			case 1: return body._1;
+			case 2: return body._2;
+			case 3: return body._3;
+			case 4: return body._4;
+			case 5: return body._5;
+			case 6: return body._6;
+			case 7: return body._7;
+			case 8: return body._8;
+			case 9: return body._9;
+		}
 	},
 };
 
 var talent = {
 	_0 : {
+		id: 0,
 		name: "雜屬廢靈根",
 		need: new BigNumber(200),
 		num: new BigNumber(0),
@@ -144,6 +195,7 @@ var talent = {
 		getNext: () => { return talent._1; },
 	},
 	_1 : {
+		id: 1,
 		name: "五屬混靈根",
 		need: new BigNumber(800),
 		num: new BigNumber(1),
@@ -151,6 +203,7 @@ var talent = {
 		getNext: () => { return talent._2; },
 	},
 	_2 : {
+		id: 2,
 		name: "四屬弱靈根",
 		need: new BigNumber(3000),
 		num: new BigNumber(2),
@@ -158,20 +211,23 @@ var talent = {
 		getNext: () => { return talent._3; },
 	},
 	_3 : {
+		id: 3,
 		name: "三重靈根",
-		need: new BigNumber(10).pow(4),
+		need: new BigNumber(10).pow(4).times(5),
 		num: new BigNumber(3),
 		top: false,
 		getNext: () => { return talent._4; },
 	},
 	_4 : {
+		id: 4,
 		name: "雙靈根",
-		need: new BigNumber(10).pow(5),
+		need: new BigNumber(10).pow(5).times(2),
 		num: new BigNumber(4),
 		top: false,
 		getNext: () => { return talent._5; },
 	},
 	_5 : {
+		id: 5,
 		name: "單靈根",
 		need: new BigNumber(10).pow(7),
 		num: new BigNumber(5),
@@ -179,6 +235,7 @@ var talent = {
 		getNext: () => { return talent._6; },
 	},
 	_6 : {
+		id: 6,
 		name: "天靈根",
 		need: new BigNumber(10).pow(9),
 		num: new BigNumber(6),
@@ -186,11 +243,24 @@ var talent = {
 		getNext: () => { return talent._7; },
 	},
 	_7 : {
+		id: 7,
 		name: "聖靈根",
 		need: new BigNumber(10).pow(16),
 		num: new BigNumber(7),
 		top: true,
 		getNext: () => { return null; },
 	},
-
+	find: (id) => {
+		switch(id){
+			default:
+			case 0: return talent._0;
+			case 1: return talent._1;
+			case 2: return talent._2;
+			case 3: return talent._3;
+			case 4: return talent._4;
+			case 5: return talent._5;
+			case 6: return talent._6;
+			case 7: return talent._7;
+		}
+	},
 };

@@ -7,6 +7,13 @@ var app = new Vue({
 		backCss : {
 			background: '#333333',
 		},
+		nameCss : {
+			width: '100px',
+		},
+		buttonCss : {
+			width: '60%',
+			'font-size': '200%',
+		},
 		centerCss : {
 			background: '#efefef',
 		},
@@ -36,7 +43,14 @@ var app = new Vue({
 		Tr4css : {
 			background: '#f2d6ff',
 		},
-
+		logCss : {
+			background: '#ffffff',
+			height: '300px',
+			overflow: 'scroll',
+		},
+		dataCss : {
+			width: '70%',
+		},
 
 
 		// 讀秒器
@@ -62,10 +76,12 @@ var app = new Vue({
 		itemCost : new BigNumber(10000),
 
 		// 顯示用
-		world : "基礎",
-		number : 0,
- 
- 		logTxt: [],  
+		name: "大中天",
+		born: true,
+		world : [ "基礎" ],
+  		logTxt: [], 
+  		record: "",
+
  		numFilter: { 
  			txt: (str) => {
  				var rev = str.split('').reverse().join('');
@@ -166,20 +182,22 @@ var app = new Vue({
 				var newItem = {
 					name  : randName,
 					object: _item,
-					used  : !_item.useAble,
 				};
 
 				app.logTxt.splice(0, 0, randomNewItemLog(randName)+"！");
-				app.items.push( newItem );
+				app.items.splice(0, 0, newItem );
 			}
 		},
 		_useItem: (id) => {
-			if( app.items[id].object.useAble && !app.items[id].used ){	
-				app.items[id].used = true;			
+			if( app.items[id].object.useAble ){
 				app.items[id].object.start();
+				app.items.splice(id, 1);
 			}
 		},
 		// 顯示用
+		_setName: () => {
+			app.born = false;
+		},
 		_show: () => {
 	        app.number = app.point.toString();
 
@@ -205,7 +223,8 @@ var app = new Vue({
 		},
 		_gotoNextWorld: () => {
 			app.worldTimes += 1;
-			app.world = randomWorldName();
+			app.world.splice( 0, 0, randomWorldName() );
+			app.itemWait = new BigNumber(10).plus(app.worldTimes);
 			app.itemCost = new BigNumber(10000).times( new BigNumber(1.1).pow(app.worldTimes) ).round();
 
 			app.point = new BigNumber(0);
@@ -214,9 +233,7 @@ var app = new Vue({
 			app.body = body._0; 
 
 			var tmpItems = [];
-			for( i of app.items ){
-				if( !i.used || !i.object.useAble ){ tmpItems.push(i); }
-			}
+			for( i of app.items ){ tmpItems.push(i); }
 			if( tmpItems.length > 0 ){			
 				var leftItem = tmpItems[ Math.floor( Math.random() * tmpItems.length ) ];
 				app.items = [ leftItem ];
@@ -240,8 +257,81 @@ var app = new Vue({
 				app.talent = talent._0;
 			}
 
-			app.logTxt.splice(0, 0, "境界圓滿，破碎虛空！超脫當前世界進入"+app.world+"界！");
-		}
+			app.logTxt.splice(0, 0, "境界圓滿，破碎虛空！超脫當前世界進入"+app.world[0]+"界！");
+		}, 
+		_showData: () => {
+			var data = {};
+			data.point = app.point.toString();
+			data.level = app.level.id;
+			data.body = app.body.id;
+			data.talent = app.talent.id;
+
+			data.name = app.name;
+			data.world = app.world;
+			data.worldTimes = app.worldTimes;
+
+			data.skills = [];
+			for(s of app.skills){
+				data.skills.push({
+					name: s.name,
+					id: s.object.id,
+					level: s.level,
+					weight: s.weight.toString(),
+				});
+			}
+
+			data.items = [];
+			for(i of app.items){
+				data.items.push({
+					name: i.name,
+					id: items.indexOf(i.object),
+				});
+			}
+			data.itemCost = app.itemCost.toString();
+			data.itemWait = app.itemWait.toString();
+
+			app.record = LZString.compressToEncodedURIComponent( JSON.stringify(data) );
+		},
+		_loadData: () => {
+			try{
+			    var record = LZString.decompressFromEncodedURIComponent( app.record );
+			    if( !record ){ app._alert("不正確的資料"); return; }
+
+        		var data = JSON.parse( record );
+
+        		app.point = new BigNumber( data.point );
+        		app.level = level.find( data.level );
+        		app.body = body.find( data.body );
+        		app.talent = talent.find( data.talent );
+
+        		app.name = data.name;
+        		app.world = data.world;
+        		app.worldTimes = data.worldTimes;
+        		app.logTxt = [];
+
+        		app.skills = [];
+        		for( s of data.skills ){
+        			app.skills.push({
+        				name: s.name,
+        				object: skill.find( s.id ),
+        				level: s.level,
+        				weight: new BigNumber( s.weight ),
+        			});
+        		}
+
+        		app.items = [];
+        		for( i of data.items ){
+        			app.items.push({
+        				name: i.name,
+        				object: items[ i.id ],
+        			});
+        		}
+
+		    }catch(e){
+		        app._alert(e);
+		    }
+		},
+		_alert: (e) => { alert(e); },
 	},
 });
 
