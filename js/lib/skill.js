@@ -874,10 +874,10 @@ var skills = {
 	c1_2 : {
 		id: 'c1_2',
 		top: false,
-		degree: "中級",(10).pow(4).times(5),
-		run: () => {
+		degree: "中級",
 		info: "每秒增加2,000邪派修為，汙染道心",
-		need: new BigNumber
+		need: new BigNumber(10).pow(4).times(5),
+		run: () => {
 			app.pointPerSec = app.pointPerSec.minus(200);
 			app.standPerSec = app.standPerSec.minus(10);
 		},

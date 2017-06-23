@@ -146,6 +146,8 @@ var app = new Vue({
 		_countAutoAdd: () => {	
 			app.point = app.point.plus( app.pointPerSec );
 
+ 			// 限制處理
+ 			if( app.point.lessThan(0) ){ app.point = new BigNumber(0); }
 		},
 		_countPointPerSec: () => {
 			app.pointPerSec = new BigNumber(0);
@@ -167,7 +169,6 @@ var app = new Vue({
  			app.groupWait = app.groupWait > 0 ? app.groupWait -1 : 0;
 
  			// 限制處理
- 			if( app.point.lessThan(0) ){ app.point = new BigNumber(0); }
  			if( app.money.lt(0) ){ app.money = new BigNumber(0); }
  			if( app.renown.lt(0) ){ app.renown = new BigNumber(0); }
  			if( app.standPoint.gt(10000) ){ app.standPoint = new BigNumber(10000); }
