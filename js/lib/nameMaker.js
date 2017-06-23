@@ -39,6 +39,10 @@ var attrType = [
 	"寶", "之", "無上", "神仙", "心", 
 ];
 
+var groupName = [
+	"世家", "教", "派", "門", "幫", "會", "堂", "樓", "宮", "寺",
+	"宗", "大寨", "峰", "道", "院", "殿", "觀", 
+];
 
 
 var randomSkillName = function(){
@@ -73,6 +77,12 @@ var randomItemName = function(){
 var randomWorldName = function(){
 	var a1 = attr1[ Math.floor( Math.random() * attr1.length ) ];
 	return a1;
+}
+
+var randomGroupName = function(){
+	var a2 = attr2[ Math.floor( Math.random() * attr2.length ) ];
+	var g = groupName[ Math.floor( Math.random() * groupName.length ) ];
+	return a2+g;	
 }
 
 var randomNewSkillLog = function(randName){

@@ -60,19 +60,35 @@ var app = new Vue({
 
 		secInterval : 1000,
 		secThen : 0,
-		wait : 10,
+		itemWait : 10,
+		groupWait : 3,
 
 		// 點數
 		worldTimes : 0,
+		life : new BigNumber(10000),
+		totalLife : new BigNumber(10000),
+		renown : new BigNumber(100),
+		money : new BigNumber(100),
+
+		stand : stands._3,
+		standPoint : new BigNumber(1.0), // 10000 ~ -10000 
+		standPerSec : new BigNumber(0),  // 10 ~ -10
+
+		group : { exist: false, object: null, name: '散修', },
+		groupInterval : new BigNumber(30),
+
 		point : new BigNumber(0.0),
 		pointPerSec: new BigNumber(0.0),
+
 		level : level._0,
 		talent: talent._0,
 		body : body._0,
 
 		skills : [],
+		removeCost : new BigNumber(100),
+
 		items : [],
-		itemWait : new BigNumber(10),
+		itemInterval : new BigNumber(5),
 		itemCost : new BigNumber(10000),
 
 		// 顯示用
@@ -115,19 +131,47 @@ var app = new Vue({
 	        if( secElapsed > app.secInterval ){
 	            app.secThen = now - (secElapsed % app.secInterval);
  				
- 				app.wait -= 1;
- 				if( app.wait < 0 ) { app.wait = 0; } 
+ 				app._countPerSec();
 	        }
 
-			app.timerId = window.requestAnimationFrame( app._timer );
+	        if( app.life.eq(0) || app.life.lessThan(0) ){ app._goEnd(); }
+	        else{ app.timerId = window.requestAnimationFrame( app._timer ); }
 		},
 		// 點數
 		_addByBody: () => {
-			app.point = app.point.plus( app.body.num );
+			if( app.life.greaterThan(0) ){
+				app.point = app.point.plus( app.body.num );
+			}
 		},
-		_countAutoAdd: () => {
-			app._countPointPerSec();
+		_countAutoAdd: () => {	
 			app.point = app.point.plus( app.pointPerSec );
+
+		},
+		_countPointPerSec: () => {
+			app.pointPerSec = new BigNumber(0);
+			app.standPerSec = new BigNumber(0);
+			for( s of app.skills ){ s.object.run(); } 
+			for( i of app.items ){  i.object.runPerSec(); }
+
+			if( app.group.exist ){ app.group.object.run(); }
+			app.standPoint = app.standPoint.plus( app.standPerSec );
+			app.stand = stands.find( app.standPoint );
+
+			app.pointPerSec = app.stand.filter( app.pointPerSec );			
+		},
+		_countPerSec: () => {		
+			app._countPointPerSec();
+
+ 			app.life = app.life.minus(1);
+ 			app.itemWait = app.itemWait > 0 ? app.itemWait -1 : 0;
+ 			app.groupWait = app.groupWait > 0 ? app.groupWait -1 : 0;
+
+ 			// 限制處理
+ 			if( app.point.lessThan(0) ){ app.point = new BigNumber(0); }
+ 			if( app.money.lt(0) ){ app.money = new BigNumber(0); }
+ 			if( app.renown.lt(0) ){ app.renown = new BigNumber(0); }
+ 			if( app.standPoint.gt(10000) ){ app.standPoint = new BigNumber(10000); }
+ 			else if( app.standPoint.lt(-10000) ){app.standPoint = new BigNumber(-10000); }
 		},
 		_talentLvUp: () => {
 			if( !app.point.lessThan( app.talent.need ) ){
@@ -146,8 +190,8 @@ var app = new Vue({
 			}
 		},
 		_skillLvUp: ( i ) => {
-			if( !app.point.lessThan( app.skills[i].object.need.times( app.skills[i].weight ) ) ){
-				app.point = app.point.minus( app.skills[i].object.need.times( app.skills[i].weight ) );
+			if( !app.point.lessThan( app.skills[i].object.need ) ){
+				app.point = app.point.minus( app.skills[i].object.need );
 				app.skills[i].object = app.skills[i].object.getNext();
 
 				app.logTxt.splice(0, 0, "潛心修練"+app.skills[i].name+"，功力提升！");
@@ -161,12 +205,17 @@ var app = new Vue({
 				var randName = randomSkillName();
 				app.skills.push( {
 					name  : randName,
-					object: skill._0,
-					level : app.skills.length,
-					weight: new BigNumber(app.skills.length+1),
+					object: getRandomSkill(),
 				} );
 
 				app.logTxt.splice(0, 0, randomNewSkillLog(randName)+"！");
+			}
+		},
+		_skillRemove: (id) => {
+			if( !app.money.lessThan(app.removeCost) ){
+				app.money = app.money.minus(app.removeCost);
+				app.removeCost = app.removeCost.plus(10);
+				app.skills.splice(id, 1);
 			}
 		},
 		_getNewItem: () => {
@@ -174,8 +223,8 @@ var app = new Vue({
 				!( app.point.lessThan( app.itemCost ) ) ){
 				app.point = app.point.div( 10 ).round();
 				app.itemCost = app.itemCost.times(1.1).round();
-				app.itemWait = app.itemWait.plus(1);
-				app.wait = app.itemWait.toNumber();
+				app.itemInterval = app.itemInterval.plus(1);
+				app.itemWait = app.itemInterval.toNumber();
 
 				var randName = randomItemName();
 				var _item = getRandomItem();
@@ -194,13 +243,29 @@ var app = new Vue({
 				app.items.splice(id, 1);
 			}
 		},
+		_joinGroup: () => {
+			if( !app.renown.lessThan(100) ){
+				app.renown = app.renown.minus(100);
+				app.group = { 
+					exist: true, 
+					object: getRandomGroup(), 
+					name: randomGroupName(), 
+				};
+				app.group.object.start();
+			}
+		},
+		_exitGroup: () => {
+			app.group.object.end();
+			app.group = { exist: false, object: null, name: '散修', };
+
+			app.groupInterval = app.groupInterval.plus(10);
+			app.groupWait = app.groupInterval.toNumber();
+		},
 		// 顯示用
 		_setName: () => {
 			app.born = false;
 		},
 		_show: () => {
-	        app.number = app.point.toString();
-
 	        while( app.point.greaterThan( app.level.max ) ){
 	        	if( app.level.getNext() == null ){
 	        		app._gotoNextWorld();
@@ -212,39 +277,24 @@ var app = new Vue({
 	        }
 
 		},
-		_countPointPerSec: () => {
-			app.pointPerSec = new BigNumber(0);
-			for( s of app.skills ){
-				app.pointPerSec = app.pointPerSec.plus( s.object.num.times( app.talent.num ).times( s.weight ) );
-			}
-			for( i of app.items ){ 
-				app.pointPerSec = app.pointPerSec.plus( i.object.getPointPerSec() );
-			}
-		},
 		_gotoNextWorld: () => {
 			app.worldTimes += 1;
 			app.world.splice( 0, 0, randomWorldName() );
-			app.itemWait = new BigNumber(10).plus(app.worldTimes);
-			app.itemCost = new BigNumber(10000).times( new BigNumber(1.1).pow(app.worldTimes) ).round();
 
 			app.point = new BigNumber(0);
 			app.pointPerSec = new BigNumber(0);
 			app.level = level._0;
 			app.body = body._0; 
+		
+			app.renown = new BigNumber(10);
+			app.money = new BigNumber(100);
 
-			var tmpItems = [];
-			for( i of app.items ){ tmpItems.push(i); }
-			if( tmpItems.length > 0 ){			
-				var leftItem = tmpItems[ Math.floor( Math.random() * tmpItems.length ) ];
-				app.items = [ leftItem ];
-			}else{
-				app.items = [];
-			}
+			app.group = { exist: false, object: null, name: '散修', };
+			app.groupInterval = new BigNumber(60);
+			app.groupWait = app.groupInterval.toNumber();
 
 			if( app.skills.length > 0 ){
 				var leftSkill = app.skills[ Math.floor( Math.random() * app.skills.length ) ];
-				leftSkill.level = 0;
-				leftSkill.weight = 1;
 				for(var i = 0; i < 4; i++){
 					if( leftSkill.object.getPrev() != null ){
 						leftSkill.object = leftSkill.object.getPrev();
@@ -257,11 +307,23 @@ var app = new Vue({
 				app.talent = talent._0;
 			}
 
+			var tmpItems = [];
+			for( i of app.items ){ tmpItems.push(i); }
+			if( tmpItems.length > 0 ){			
+				var leftItem = tmpItems[ Math.floor( Math.random() * tmpItems.length ) ];
+				app.items = [ leftItem ];
+			}else{
+				app.items = [];
+			}
+			app.itemCost = new BigNumber(10000);
+			app.itemInterval = new BigNumber(10);
+			app.itemWait = app.itemInterval.toNumber();
+
 			app.logTxt.splice(0, 0, "境界圓滿，破碎虛空！超脫當前世界進入"+app.world[0]+"界！");
 		}, 
 		_showData: () => {
 			var data = {};
-			data.point = app.point.toString();
+			data.point = app.point.round().toString();
 			data.level = app.level.id;
 			data.body = app.body.id;
 			data.talent = app.talent.id;
@@ -269,14 +331,17 @@ var app = new Vue({
 			data.name = app.name;
 			data.world = app.world;
 			data.worldTimes = app.worldTimes;
+			data.life = app.life.toString();
+			data.totalLife = app.totalLife.toString();
+			data.money = app.money.toString();
+			data.renown = app.renown.toString();
+        	data.standPoint = app.standPoint.toString();
 
 			data.skills = [];
 			for(s of app.skills){
 				data.skills.push({
 					name: s.name,
 					id: s.object.id,
-					level: s.level,
-					weight: s.weight.toString(),
 				});
 			}
 
@@ -288,34 +353,39 @@ var app = new Vue({
 				});
 			}
 			data.itemCost = app.itemCost.toString();
-			data.itemWait = app.itemWait.toString();
+			data.itemInterval = app.itemInterval.toString();
 
 			app.record = LZString.compressToEncodedURIComponent( JSON.stringify(data) );
 		},
 		_loadData: () => {
 			try{
 			    var record = LZString.decompressFromEncodedURIComponent( app.record );
-			    if( !record ){ app._alert("不正確的資料"); return; }
+			    if( !record ){ alert("不正確的資料"); return; }
 
         		var data = JSON.parse( record );
 
         		app.point = new BigNumber( data.point );
-        		app.level = level.find( data.level );
-        		app.body = body.find( data.body );
-        		app.talent = talent.find( data.talent );
+        		app.level = level[ data.level ];
+        		app.body = body[ data.body ];
+        		app.talent = talent[data.talent ];
 
         		app.name = data.name;
         		app.world = data.world;
         		app.worldTimes = data.worldTimes;
+        		app.life = new BigNumber( data.life );
+        		app.totalLife = new BigNumber( data.totalLife );
+        		app.money = new BigNumber( data.money );
+        		app.renown = new BigNumber( data.renown );
+        		app.standPoint = new BigNumber( data.standPoint );
+				app.stand = stands.find( app.standPoint );
+
         		app.logTxt = [];
 
         		app.skills = [];
         		for( s of data.skills ){
         			app.skills.push({
         				name: s.name,
-        				object: skill.find( s.id ),
-        				level: s.level,
-        				weight: new BigNumber( s.weight ),
+        				object: skills[s.id],
         			});
         		}
 
@@ -326,12 +396,15 @@ var app = new Vue({
         				object: items[ i.id ],
         			});
         		}
+        		app.itemCost = new BigNumber(data.itemCost);
+        		app.itemInterval = new BigNumber(data.itemInterval);
+				app.itemWait = app.itemInterval.toNumber();
 
-		    }catch(e){
-		        app._alert(e);
-		    }
+		    }catch(e){ alert(e); }
 		},
-		_alert: (e) => { alert(e); },
+		_goEnd: () => { 
+			alert( "壽元已盡，請來世再修吧！" );
+		},
 	},
 });
 

@@ -28,7 +28,7 @@
 							<button class="btn btn-default" v-on:click="_setName">命名</button>
 						</div>
 						<span v-else>{{ name }}</span>
-						<h1>修為: {{ numFilter.txt( point.toString() ) }} </h1>
+						<h1>修為: {{ numFilter.txt( point.round().toString() ) }} </h1>
 				</div> 
 				<div class="row">
 	            	<div class="col-md-4 text-left">
@@ -40,18 +40,22 @@
 	            	<div class="col-md-4 text-right">
 	            		<h3>{{ level.name }} 境界</h3>
 	            		{{ numFilter.txt( level.max.toString() ) }}
-						<p>每秒增加 {{ numFilter.txt( pointPerSec.times( 10 ).toString() ) }} 修為</p>
+						<p>每秒
+						<template v-if="!pointPerSec.lessThan(0)">增加</template>
+						<template v-else>減少</template>
+						{{ numFilter.txt( pointPerSec.abs().times(10).round().toString() ) }} 修為</p>
 	            	</div> 
 				</div> 
 				<hr/>
 
-				<div class="row"  v-bind:style="tableRowCss">
-				<br/>
-				<table v-bind:style="tableCss" id="info" class="table table-bordered table-condensed">
+				<div class="row"  v-bind:style="tableRowCss"></br>
+
+				<table v-bind:style="tableCss" id="info"  class="table table-bordered table-condensed">
 				<tbody> 
 					<tr v-bind:style="Tr0css">
 						<td>名稱</td><td>能力</td><td>升級需求</td><td> </td>
 					</tr>
+
 					<tr v-bind:style="Tr1css">
 						<td colspan="4" class="text-left">身體</td>
 					</tr>
@@ -65,6 +69,7 @@
 							<button class="btn btn-default" v-on:click="_bodyLvUp" :disabled="point.lessThan( body.need ) || body.top "> 升級</button>
 						</td>
 					</tr>
+
 					<tr v-bind:style="Tr2css">
 						<td colspan="4" class="text-left">靈根</td>
 					</tr>
@@ -80,6 +85,7 @@
 							<button class="btn btn-default" v-on:click="_talentLvUp" :disabled="point.lessThan( talent.need ) || talent.top ">升級</button>
 						</td>
 					</tr>
+
 					<tr  v-bind:style="Tr3css" id="skillRow">
 						<td class="text-left"> 
 							功法：{{ skills.length }}項 
@@ -98,35 +104,77 @@
 					</tr>
 					<tr v-for="(skill, id) in skills">
 						<td><h5> {{ skill.name }} - {{ skill.object.degree }} </h5></td> 
-						<td> 
-							每秒增加 
-							{{ numFilter.txt( skill.object.num.times( talent.num ).times( 10 ).times( skill.weight ).toString() ) }} 修為
+						<td>
+							{{ skill.object.info }}
 						</td> 
 						<td> 
 							<template v-if="!skill.object.top">
-							{{ numFilter.txt( skill.object.need.times( skill.weight ).toString() ) }} 修為
+							{{ numFilter.txt( skill.object.need.toString() ) }} 修為
 							</template>
 						</td>
 						<td>
-							<button class="btn btn-default" v-on:click="_skillLvUp(id)" :disabled="point.lessThan( skill.object.need.times( skill.weight ) ) || skill.object.top ">升級</button>
+							<button class="btn btn-default" v-on:click="_skillLvUp(id)" :disabled="point.lessThan( skill.object.need ) || skill.object.top ">升級</button>
+							<button class="btn btn-default" v-on:click="_skillRemove(id)" :disabled="money.lessThan(removeCost)">散功({{ removeCost.toString() }}金)</button>
+						</td>
+					</tr>					
+				</tbody>
+				</table><br/>
+
+				<table v-bind:style="tableCss" id="status"  class="table table-bordered table-condensed">
+				<tbody> 
+					<tr v-bind:style="Tr0css">
+						<td>壽元</td>
+						<td>立場</td>
+						<td>名氣</td>
+						<td>財富</td>
+					</tr>
+					<tr>
+						<td> {{ life.toString() }} / {{ totalLife.toString() }} 秒</td>
+						<td> {{ stand.name }} {{ standPoint.div(100).round().toString() }}% </td>
+						<td> {{ renown.toString() }} </td>
+						<td> {{ money.toString() }}金 </td>
+					</tr>
+					<tr v-bind:style="Tr1css">
+						<td colspan="4" class="text-left">歸屬</td>
+					</tr>
+					<tr>
+						<td ><h4> {{ group.name }} </h4></td>
+						<td colspan="2"> 
+							<template v-if="group.exist">{{ group.object.info }}</template> 
+							<template v-else>
+								<span v-if="groupWait>0">耗費 {{ groupWait }} 秒遊歷天下，</span>
+								花費 100 名氣探訪名師
+							</template>
+						</td>
+						<td>
+							<template v-if="group.exist">
+							<button class="btn btn-default" v-on:click="_exitGroup">金盆洗手</button>
+							</template>
+							<template v-else>
+							<button class="btn btn-default" v-on:click="_joinGroup" :disabled="groupWait!=0 || renown.lessThan(100)">拜師學藝</button>
+							</template>		
 						</td>
 					</tr>
-					<tr  v-bind:style="Tr4css" id="itemRow">
+				</tbody>
+				</table><br>
+
+				<table v-bind:style="tableCss" id="items"  class="table table-bordered table-condensed">
+					<tr v-bind:style="Tr4css" id="itemRow">
 						<td class="text-left">
 						法寶：{{ items.length }}個
 						</td>
 						<td colspan="2" class="text-center">
-							<template v-if="wait!=0">
-							下次秘境開啟 {{ wait }} 秒 ， 
+							<template v-if="itemWait!=0">
+							下次秘境開啟 {{ itemWait }} 秒 ， 
 							</template>
 							門檻需達 {{ numFilter.txt( level.max.div(2).greaterThan( itemCost ) ? level.max.div(2).toString() : itemCost.toString() ) }} 修為，
 							消耗九成修為
 						</td>
 						<td class="text-center">							
-							<button class="btn btn-default" v-on:click="_getNewItem" :disabled="point.lessThan( level.max.div(2) ) || point.lessThan(itemCost) || wait!=0 "> 尋找機緣</button>
+							<button class="btn btn-default" v-on:click="_getNewItem" :disabled="point.lessThan( level.max.div(2) ) || point.lessThan(itemCost) || itemWait!=0 "> 尋找機緣</button>
 						</td>
-					</tr> 
-					<tr v-for="(i, id) in items">>
+					</tr>
+					<tr v-for="(i, id) in items">
 						<td><h5> {{ i.name }} </h5></td> 
 						<td colspan="2" class="text-left"> {{ i.object.info }} </td>
 						<td>
@@ -136,10 +184,10 @@
 							<div v-else style="color:gray;"> 被動 </div>
 							
 						</td>
-					</tr>
+					</tr> 
 				</tbody>
-				</table>
-				<br/>
+				</table><br>
+
 				</div> 
  	 
 				<hr/>
@@ -149,13 +197,14 @@
 			  			{{ t }}
 			  		</p>
 				</div>
-				<hr/>
 
 				<div>
 					<input id="data" v-bind:style="dataCss" type="text" v-model="record" >
 					<button class="btn btn-default" v-on:click="_showData">紀錄傳承</button>
 					<button class="btn btn-default" v-on:click="_loadData">接受傳承</button>
 				</div>
+
+				<hr/>
 
 			</div>
 		</div>  
@@ -169,11 +218,12 @@
 	<script type="text/javascript" src='js/LZstring/lz-string.min.js'></script>
 
     <script src="js/lib/level.js"> </script>
+    <script src="js/lib/stand.js"> </script>
     <script src="js/lib/skill.js"> </script>
     <script src="js/lib/item.js"> </script>    
     <script src="js/lib/nameMaker.js"> </script>
 
-    <!-- Vue Core JavaScript --> 
+    <!-- Vue Core JavaScript  -->
     <script src="js/vue.js"> </script>
 	<script src="js/lib/click.js" > </script>
 	<script src="js/lib/timer.js"></script> 

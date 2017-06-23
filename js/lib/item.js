@@ -1,52 +1,73 @@
 var items = [
 	// 使用類
 	{
-		info: "直接獲得些微的修為",
+		info: "直接獲得大量的財富",
 		useAble: true,
-		start: () => { app.point = app.point.plus( app.level.max.div(1000).round() ); },
-		getPointPerSec: () => { return 0; },
+		start: () => { app.money = app.money.plus( app.removeCost.times(10) ); },
+		runPerSec: () => {},
 	},
 	{
-		info: "直接獲得少量的修為",
+		info: "直接獲得大量的聲望",
 		useAble: true,
-		start: () => { app.point = app.point.plus( app.level.max.div(100).round() ); },
-		getPointPerSec: () => { return 0; },
+		start: () => { app.renown = app.renown.plus( 1000 ); },
+		runPerSec: () => {},
 	},
 	{
-		info: "直接獲得不少的修為",
+		info: "直接獲得大量的壽元",
 		useAble: true,
-		start: () => { app.point = app.point.plus( app.level.max.div(10).round() ); },
-		getPointPerSec: () => { return 0; },
+		start: () => {			
+			app.life = app.life.plus(1000);
+			app.totalLife = app.totalLife.plus(1000);
+		},
+		runPerSec: () => {},
 	},
 	{
 		info: "直接獲得大量的修為",
 		useAble: true,
 		start: () => { app.point = app.point.plus( app.level.max.div(5).round() ); },
-		getPointPerSec: () => { return 0; },
+		runPerSec: () => {},
 	},
 	{
 		info: "直接獲得當前境界一半容量的修為",
 		useAble: true,
 		start: () => { app.point = app.point.plus( app.level.max.div(2).round() ); },
-		getPointPerSec: () => { return 0; },
+		runPerSec: () => {},
 	},
 	{
 		info: "精神時光屋，可瞬間修練100次",
 		useAble: true,
 		start: () => { app.point = app.point.plus( app.body.num.times(100) ); },
-		getPointPerSec: () => { return 0; },
+		runPerSec: () => {},
 	},
 	{
 		info: "將當前的修為直接翻倍",
 		useAble: true,
 		start: () => { app.point = app.point.times(2); },
-		getPointPerSec: () => { return 0; },
+		runPerSec: () => {},
 	},
 	{
-		info: "其實好像什麼效果也沒有......",
+		info: "將當前的財富直接翻倍",
 		useAble: true,
-		start: () => { },
-		getPointPerSec: () => { return 0; },
+		start: () => { app.money = app.money.times(2); },
+		runPerSec: () => {},
+	},
+	{
+		info: "將當前的名氣直接翻倍",
+		useAble: true,
+		start: () => { app.renown = app.renown.times(2); },
+		runPerSec: () => {},
+	},
+	{
+		info: "淨化心靈，提升正派心性10%",
+		useAble: true,
+		start: () => {	app.standPoint = app.standPoint.plus(1000);  },
+		runPerSec: () => {},
+	},
+	{
+		info: "汙染心靈，逆天而行墮落10%",
+		useAble: true,
+		start: () => {	app.standPoint = app.standPoint.minus(1000);  },
+		runPerSec: () => {},
 	},
 	{
 		info: "將肉體能力提升一個等級",
@@ -57,7 +78,7 @@ var items = [
 				app.logTxt.splice(0, 0, "肉體強化！脫胎為"+app.body.name+"！");
 			}
 		},
-		getPointPerSec: () => { return 0; },
+		runPerSec: () => {},
 	},
 	{
 		info: "將靈根提升一個等級",
@@ -68,7 +89,7 @@ var items = [
 				app.logTxt.splice(0, 0, "靈根提升！升級為"+app.talent.name+"！");
 			}
 		},
-		getPointPerSec: () => { return 0; },
+		runPerSec: () => {},
 	},
 	{
 		info: "將境界直接提升一個等級",
@@ -81,7 +102,7 @@ var items = [
 	        	app._gotoNextWorld();
 			}
 		},
-		getPointPerSec: () => { return 0; },
+		runPerSec: () => {},
 	},
 	{
 		info: "將升級消耗最低的功法提升一個等級",
@@ -89,9 +110,7 @@ var items = [
 		start: () => {
 			if( app.skills.length == 0 ) return;
 			var id = 0;
-			console.log(app.skills.length);
 			for( var i = 0; i < app.skills.length; i++){
-				console.log( app.skills[i].object.need.toString() +": "+app.skills[id].object.need.toString() );
 				if( app.skills[i].object.need.lessThan(app.skills[id].object.need) ){ id = i; }
 			}
 			if( app.skills[id].object.getNext() != null ){
@@ -99,123 +118,124 @@ var items = [
 				app.logTxt.splice(0, 0, "潛心修練"+app.skills[id].name+"，功力提升！");
 			}
 		},
-		getPointPerSec: () => { return 0; },
+		runPerSec: () => {},
 	},
 	{
-		info: "丟棄所有法寶以大幅提升自身修為",
+		info: "丟棄所有法寶以大幅提升自身一般修為",
 		useAble: true,
 		start: () => {
-			app.point = app.point.plus( app.level.max.div(10).times( app.items.length ) );
+			app.point = app.point.plus( app.level.max.div(100).times( app.items.length ) );
 			app.items = [];
 		},
-		getPointPerSec: () => { return 0; },
+		runPerSec: () => {},
 	},
 	{
-		info: "放棄所有功法而瞬間超大幅提升自身修為",
+		info: "再來一次!獲得兩個新法寶",
 		useAble: true,
 		start: () => {
-			app.point = app.point.plus( new BigNumber(10).pow( app.skills.length ) );
-			app.skills = [];
+			for( var i = 0; i < 2; i++ ){
+				var newItem = {
+					name  : randomItemName(),
+					object: getRandomItem(),
+				};
+				app.logTxt.splice(0, 0, randomNewItemLog(newItem.name)+"！");
+				app.items.splice(0, 0, newItem );
+			}
 		},
-		getPointPerSec: () => { return 0; },
+		runPerSec: () => {},
+	},
+	{
+		info: "耗費所有財富，每500金購買新法寶",
+		useAble: true,
+		start: () => {
+			for( ; app.money.greaterThan(500); app.money = app.money.minus(500) ){
+				var newItem = {
+					name  : randomItemName(),
+					object: getRandomItem(),
+				};
+				app.logTxt.splice(0, 0, randomNewItemLog(newItem.name)+"！");
+				app.items.splice(0, 0, newItem );
+			}
+		},
+		runPerSec: () => {},
+	},
+	{
+		info: "耗費所有名聲尋找長生之道，每100名氣換取10秒",
+		useAble: true,
+		start: () => {
+			var t = app.renown.div(100).round();
+			app.renown = app.renown.minus( t.times(100) );
+			app.life = app.life.plus(t);
+			app.totalLife = app.totalLife.plus(t);
+		},
+		runPerSec: () => {},
+	},
+	{
+		info: "換個地方重新出發，將立場回歸中立",
+		useAble: true,
+		start: () => {
+			app.standPoint.times(0);
+			app.stand = stands.find( app.standPoint );
+		},
+		runPerSec: () => {},
 	},
 	// 常駐類
 	{
-		info: "每秒獲得些微的修為",
+		info: "每秒獲得等同修練十次的一般修為",
 		useAble: false,
 		start: () => { },
-		getPointPerSec: () => { return new BigNumber(1); },
+		runPerSec: () => { 
+			app.pointPerSec = app.pointPerSec.plus( app.stand.num.times( app.body.num ) ); 
+		},
 	},
 	{
-		info: "每秒獲得少許的修為",
+		info: "每秒獲得等同境界容量之萬分之一的一般修為",
 		useAble: false,
 		start: () => { },
-		getPointPerSec: () => { return new BigNumber(2); },
+		runPerSec: () => { 
+			app.pointPerSec = app.pointPerSec.plus( app.stand.num.times( app.level.max.div(100000) ) ); 
+		},
 	},
 	{
-		info: "每秒獲得一點點的修為",
+		info: "每秒獲得當前修為之萬分之一的一般修為",
 		useAble: false,
 		start: () => { },
-		getPointPerSec: () => { return new BigNumber(3); },
+		runPerSec: () => { 
+			app.pointPerSec = app.pointPerSec.plus( app.stand.num.times( app.point.div(100000) ) ); 
+		},
 	},
 	{
-		info: "每秒獲得不多的修為",
+		info: "每秒可獲得1點財富",
 		useAble: false,
 		start: () => { },
-		getPointPerSec: () => { return new BigNumber(5); },
+		runPerSec: () => { app.money = app.money.plus(1); },
 	},
 	{
-		info: "每秒獲得一定量的修為",
+		info: "每秒可獲得1點名氣",
 		useAble: false,
 		start: () => { },
-		getPointPerSec: () => { return new BigNumber(10); },
+		runPerSec: () => { app.renown = app.renown.plus(1); },
 	},
 	{
-		info: "每秒獲得等同修練一次的修為",
+		info: "每秒可獲得1點壽元",
 		useAble: false,
 		start: () => { },
-		getPointPerSec: () => { return app.body.num.div(10).round(); },
+		runPerSec: () => { 
+			app.life = app.life.plus(1);
+			app.totalLife = app.totalLife.plus(1);
+		},
 	},
 	{
-		info: "每秒獲得等同修練兩次的修為",
+		info: "可持續增加正派心性",
 		useAble: false,
 		start: () => { },
-		getPointPerSec: () => { return app.body.num.times(2).div(10).round(); },
+		runPerSec: () => { app.standPerSec = app.standPerSec.plus(2); },
 	},
 	{
-		info: "每秒獲得等同修練五次的修為",
+		info: "可持續墮落滋長魔性",
 		useAble: false,
 		start: () => { },
-		getPointPerSec: () => { return app.body.num.times(5).div(10).round(); },
-	},
-	{
-		info: "每秒獲得等同修練十次的修為",
-		useAble: false,
-		start: () => { },
-		getPointPerSec: () => { return app.body.num; },
-	},
-	{
-		info: "每秒獲得等同境界容量之萬分之一的修為",
-		useAble: false,
-		start: () => { },
-		getPointPerSec: () => { return app.level.max.div(100000).round(); },
-	},
-	{
-		info: "每秒獲得當前修為之萬分之一的修為",
-		useAble: false,
-		start: () => { },
-		getPointPerSec: () => { return app.point.div(100000).round(); },
-	},
-	{
-		info: "每秒可獲得依法寶數量而增加的修為",
-		useAble: false,
-		start: () => { },
-		getPointPerSec: () => { return app.level.max.div(1000000).times( app.items.length ).round(); },
-	},
-	{
-		info: "每秒可獲得依功法數量而增加的修為",
-		useAble: false,
-		start: () => { },
-		getPointPerSec: () => { return new BigNumber(2).pow( app.skills.length ).round() ; },
-	},
-	// 負面
-	{
-		info: "倦怠之心會緩慢衰退修為",
-		useAble: false,
-		start: () => { },
-		getPointPerSec: () => { return new BigNumber(-1); },
-	}, 
-	{
-		info: "入魔之身會快速衰退修為",
-		useAble: false,
-		start: () => { },
-		getPointPerSec: () => { return new BigNumber(-2); },
-	},
-	{
-		info: "逆天之行會急遽衰退修為",
-		useAble: false,
-		start: () => { },
-		getPointPerSec: () => { return new BigNumber(-3); },
+		runPerSec: () => { app.standPerSec = app.standPerSec.plus(2); },
 	},
 ];
 
