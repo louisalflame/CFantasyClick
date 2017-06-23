@@ -286,6 +286,7 @@ var app = new Vue({
 			app.pointPerSec = new BigNumber(0);
 			app.level = level._0;
 			app.body = body._0; 
+			app.standPoint = new BigNumber(0);
 		
 			app.renown = new BigNumber(10);
 			app.money = new BigNumber(100);
