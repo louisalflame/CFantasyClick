@@ -61,7 +61,7 @@ var app = new Vue({
 		secInterval : 1000,
 		secThen : 0,
 		itemWait : 10,
-		groupWait : 3,
+		groupWait : 30,
 
 		// 點數
 		worldTimes : 0,
@@ -75,7 +75,7 @@ var app = new Vue({
 		standPerSec : new BigNumber(0),  // 10 ~ -10
 
 		group : { exist: false, object: null, name: '散修', },
-		groupInterval : new BigNumber(30),
+		groupInterval : new BigNumber(10),
 
 		point : new BigNumber(0.0),
 		pointPerSec: new BigNumber(0.0),
