@@ -17,7 +17,6 @@ var items = [
 		useAble: true,
 		start: () => {			
 			app.life = app.life.plus(1000);
-			app.totalLife = app.totalLife.plus(1000);
 		},
 		runPerSec: () => {},
 	},
@@ -145,7 +144,7 @@ var items = [
 		runPerSec: () => {},
 	},
 	{
-		info: "耗費所有財富，每1000金購買新法寶，最多100個",
+		info: "耗費所有財富，每1000金購買新法寶，最多買100個",
 		useAble: true,
 		start: () => {
 			for( ; app.money.greaterThan(1000); app.money = app.money.minus(1000) ){
@@ -167,7 +166,6 @@ var items = [
 			var t = app.renown.div(100).round();
 			app.renown = app.renown.minus( t.times(100) );
 			app.life = app.life.plus(t);
-			app.totalLife = app.totalLife.plus(t);
 		},
 		runPerSec: () => {},
 	},
@@ -223,7 +221,6 @@ var items = [
 		start: () => { },
 		runPerSec: () => { 
 			app.life = app.life.plus(1);
-			app.totalLife = app.totalLife.plus(1);
 		},
 	},
 	{
@@ -236,7 +233,7 @@ var items = [
 		info: "可持續墮落滋長魔性",
 		useAble: false,
 		start: () => { },
-		runPerSec: () => { app.standPerSec = app.standPerSec.plus(2); },
+		runPerSec: () => { app.standPerSec = app.standPerSec.minus(2); },
 	},
 ];
 

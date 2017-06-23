@@ -103,7 +103,6 @@ var skills = {
 			app.pointPerSec = app.pointPerSec.plus(5050505);
 			app.standPerSec = app.standPerSec.plus(3);
 			app.life = app.life.plus(1);
-			app.totalLife = app.totalLife.plus(1);
 		},
 		getPrev: () => { return skills.a0_6 },
 		getNext: () => { return skills.a0_8 },
@@ -118,7 +117,6 @@ var skills = {
 			app.pointPerSec = app.pointPerSec.plus(11111111);
 			app.standPerSec = app.standPerSec.plus(4);
 			app.life = app.life.plus(2);
-			app.totalLife = app.totalLife.plus(2);
 		},
 		getPrev: () => { return skills.a0_7 },
 		getNext: () => { return null },
@@ -200,7 +198,6 @@ var skills = {
 			app.pointPerSec = app.pointPerSec.plus(1000);
 			app.standPerSec = app.standPerSec.plus(10);
 			app.life = app.life.plus(1);
-			app.totalLife = app.totalLife.plus(1);
 		},
 		getPrev: () => { return skills.a1_4 },
 		getNext: () => { return skills.a1_6 },
@@ -215,7 +212,6 @@ var skills = {
 			app.pointPerSec = app.pointPerSec.plus(20000);
 			app.standPerSec = app.standPerSec.plus(15);
 			app.life = app.life.plus(2);
-			app.totalLife = app.totalLife.plus(2);
 		},
 		getPrev: () => { return skills.a1_5 },
 		getNext: () => { return skills.a1_7 },
@@ -230,7 +226,6 @@ var skills = {
 			app.pointPerSec = app.pointPerSec.plus(300000);
 			app.standPerSec = app.standPerSec.plus(20);
 			app.life = app.life.plus(3);
-			app.totalLife = app.totalLife.plus(3);
 		},
 		getPrev: () => { return skills.a1_6 },
 		getNext: () => { return skills.a1_8 },
@@ -245,7 +240,6 @@ var skills = {
 			app.pointPerSec = app.pointPerSec.plus(9999999999);
 			app.standPerSec = app.standPerSec.plus(30);
 			app.life = app.life.plus(5);
-			app.totalLife = app.totalLife.plus(5);
 		},
 		getPrev: () => { return skills.a1_7 },
 		getNext: () => { return null },
@@ -964,7 +958,6 @@ var skills = {
 			app.standPerSec = app.standPerSec.minus(2);
 			app.renown = app.renown.minus(4);
 			app.life = app.life.minus(1);
-			app.totalLife = app.totalLife.minus(1);
 		},
 		getPrev: () => { return skills.c2_2 },
 		getNext: () => { return skills.c2_4 },
@@ -980,7 +973,6 @@ var skills = {
 			app.standPerSec = app.standPerSec.minus(3);
 			app.renown = app.renown.minus(5);
 			app.life = app.life.minus(1);
-			app.totalLife = app.totalLife.minus(1);
 		},
 		getPrev: () => { return skills.c2_3 },
 		getNext: () => { return skills.c2_5 },
@@ -996,7 +988,6 @@ var skills = {
 			app.standPerSec = app.standPerSec.minus(4);
 			app.renown = app.renown.minus(6);
 			app.life = app.life.minus(3);
-			app.totalLife = app.totalLife.minus(3);
 		},
 		getPrev: () => { return skills.c2_4 },
 		getNext: () => { return skills.c2_6 },
@@ -1012,7 +1003,6 @@ var skills = {
 			app.standPerSec = app.standPerSec.minus(5);
 			app.renown = app.renown.minus(7);
 			app.life = app.life.minus(5);
-			app.totalLife = app.totalLife.minus(5);
 		},
 		getPrev: () => { return skills.c2_5 },
 		getNext: () => { return skills.c2_7 },
@@ -1028,7 +1018,6 @@ var skills = {
 			app.standPerSec = app.standPerSec.minus(6);
 			app.renown = app.renown.minus(8);
 			app.life = app.life.minus(10);
-			app.totalLife = app.totalLife.minus(10);
 		},
 		getPrev: () => { return skills.c2_6 },
 		getNext: () => { return skills.c2_8 },
@@ -1044,7 +1033,6 @@ var skills = {
 			app.standPerSec = app.standPerSec.minus(7);
 			app.renown = app.renown.minus(10);
 			app.life = app.life.minus(100);
-			app.totalLife = app.totalLife.minus(100);
 		},
 		getPrev: () => { return skills.c2_7 },
 		getNext: () => { return null },

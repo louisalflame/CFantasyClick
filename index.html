@@ -129,7 +129,7 @@
 						<td>財富</td>
 					</tr>
 					<tr>
-						<td> {{ life.toString() }} / {{ totalLife.toString() }} 秒</td>
+						<td> {{ life.toString() }} / {{ pastLife.toString() }} 秒</td>
 						<td> {{ stand.name }} {{ standPoint.div(100).round().toString() }}% </td>
 						<td> {{ numFilter.txt( renown.toString() ) }} </td>
 						<td> {{ numFilter.txt( money.toString() ) }}金 </td>
@@ -168,10 +168,14 @@
 							下次秘境開啟 {{ itemWait }} 秒 ， 
 							</template>
 							門檻需達 {{ numFilter.txt( level.max.div(2).greaterThan( itemCost ) ? level.max.div(2).toString() : itemCost.toString() ) }} 修為，
-							消耗九成修為
+							消耗九成修為<br/>
+							擁有法寶越多、糾纏的業果越多，會開始消耗壽元
 						</td>
-						<td class="text-center">							
-							<button class="btn btn-default" v-on:click="_getNewItem" :disabled="point.lessThan( level.max.div(2) ) || point.lessThan(itemCost) || itemWait!=0 "> 尋找機緣</button>
+						<td class="text-center">
+							<button class="btn btn-default" v-on:click="_getNewItem" :disabled="point.lessThan( level.max.div(2) ) || point.lessThan(itemCost) || itemWait!=0 "> 尋找機緣</button>							
+							<template v-if="items.length!=0">
+							<button class="btn btn-default" v-on:click="_removeItems">捨斷因果</button> 
+							</template>
 						</td>
 					</tr>
 					<tr v-for="(i, id) in items">

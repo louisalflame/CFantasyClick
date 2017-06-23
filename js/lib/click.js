@@ -65,8 +65,8 @@ var app = new Vue({
 
 		// 點數
 		worldTimes : 0,
-		life : new BigNumber(10000),
-		totalLife : new BigNumber(10000),
+		life : new BigNumber(500),
+		pastLife : new BigNumber(0),
 		renown : new BigNumber(100),
 		money : new BigNumber(100),
 
@@ -159,12 +159,15 @@ var app = new Vue({
 			app.standPoint = app.standPoint.plus( app.standPerSec );
 			app.stand = stands.find( app.standPoint );
 
-			app.pointPerSec = app.stand.filter( app.pointPerSec );			
+			app.pointPerSec = app.stand.filter( app.pointPerSec );
+
+			app.life = app.life.minus( Math.round( app.items.length/5 ) );
 		},
 		_countPerSec: () => {		
 			app._countPointPerSec();
 
  			app.life = app.life.minus(1);
+ 			app.pastLife = app.pastLife.plus(1);
  			app.itemWait = app.itemWait > 0 ? app.itemWait -1 : 0;
  			app.groupWait = app.groupWait > 0 ? app.groupWait -1 : 0;
 
@@ -244,6 +247,10 @@ var app = new Vue({
 				app.items.splice(id, 1);
 			}
 		},
+		_removeItems: (id) => {
+			app.items = [];
+	        app.logTxt.splice(0, 0, "作減求空!果斷放棄所有因緣，重新來過");
+		},
 		_joinGroup: () => {
 			if( !app.renown.lessThan(100) ){
 				app.renown = app.renown.minus(100);
@@ -273,6 +280,7 @@ var app = new Vue({
 	        		break;
 	        	}
 	        	app.level = app.level.getNext();
+	        	app.life = app.life.plus(app.level.life);
 
 	        	app.logTxt.splice(0, 0, "修為積累，境界突破！進入"+app.level.name+"階段！");
 	        }
@@ -334,7 +342,7 @@ var app = new Vue({
 			data.world = app.world;
 			data.worldTimes = app.worldTimes;
 			data.life = app.life.toString();
-			data.totalLife = app.totalLife.toString();
+			data.pastLife = app.pastLife.toString();
 			data.money = app.money.toString();
 			data.renown = app.renown.toString();
         	data.standPoint = app.standPoint.toString();
@@ -375,7 +383,7 @@ var app = new Vue({
         		app.world = data.world;
         		app.worldTimes = data.worldTimes;
         		app.life = new BigNumber( data.life );
-        		app.totalLife = new BigNumber( data.totalLife );
+        		app.pastLife = new BigNumber( data.pastLife );
         		app.money = new BigNumber( data.money );
         		app.renown = new BigNumber( data.renown );
         		app.standPoint = new BigNumber( data.standPoint );
