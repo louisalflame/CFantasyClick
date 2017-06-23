@@ -139,22 +139,23 @@ var items = [
 					object: getRandomItem(),
 				};
 				app.logTxt.splice(0, 0, randomNewItemLog(newItem.name)+"！");
-				app.items.splice(0, 0, newItem );
+				app.items.splice(1, 0, newItem );
 			}
 		},
 		runPerSec: () => {},
 	},
 	{
-		info: "耗費所有財富，每500金購買新法寶",
+		info: "耗費所有財富，每1000金購買新法寶，最多100個",
 		useAble: true,
 		start: () => {
-			for( ; app.money.greaterThan(500); app.money = app.money.minus(500) ){
+			for( ; app.money.greaterThan(1000); app.money = app.money.minus(1000) ){
 				var newItem = {
 					name  : randomItemName(),
 					object: getRandomItem(),
 				};
 				app.logTxt.splice(0, 0, randomNewItemLog(newItem.name)+"！");
 				app.items.splice(0, 0, newItem );
+				if( app.items.length > 100 ){ break; }
 			}
 		},
 		runPerSec: () => {},
@@ -174,7 +175,7 @@ var items = [
 		info: "換個地方重新出發，將立場回歸中立",
 		useAble: true,
 		start: () => {
-			app.standPoint.times(0);
+			app.standPoint = new BigNumber(0);
 			app.stand = stands.find( app.standPoint );
 		},
 		runPerSec: () => {},

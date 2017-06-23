@@ -131,8 +131,8 @@
 					<tr>
 						<td> {{ life.toString() }} / {{ totalLife.toString() }} 秒</td>
 						<td> {{ stand.name }} {{ standPoint.div(100).round().toString() }}% </td>
-						<td> {{ renown.toString() }} </td>
-						<td> {{ money.toString() }}金 </td>
+						<td> {{ numFilter.txt( renown.toString() ) }} </td>
+						<td> {{ numFilter.txt( money.toString() ) }}金 </td>
 					</tr>
 					<tr v-bind:style="Tr1css">
 						<td colspan="4" class="text-left">歸屬</td>
