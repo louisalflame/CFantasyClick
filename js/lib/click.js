@@ -316,6 +316,7 @@ var app = new Vue({
 				app.skills = [ ];
 				app.talent = talent._0;
 			}
+			app.removeCost = new BigNumber(100).plus( 10 * app.worldTimes );
 
 			var tmpItems = [];
 			for( i of app.items ){ tmpItems.push(i); }
