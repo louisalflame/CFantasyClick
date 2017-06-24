@@ -138,7 +138,7 @@ var items = [
 					object: getRandomItem(),
 				};
 				app.logTxt.splice(0, 0, randomNewItemLog(newItem.name)+"！");
-				app.items.splice(1, 0, newItem );
+				app.items.splice(0, 0, newItem );
 			}
 		},
 		runPerSec: () => {},

@@ -161,7 +161,7 @@ var app = new Vue({
 
 			app.pointPerSec = app.stand.filter( app.pointPerSec );
 
-			app.life = app.life.minus( Math.round( app.items.length/5 ) );
+			app.life = app.life.minus( Math.floor( app.items.length/5 ) );
 		},
 		_countPerSec: () => {		
 			app._countPointPerSec();
@@ -243,8 +243,8 @@ var app = new Vue({
 		},
 		_useItem: (id) => {
 			if( app.items[id].object.useAble ){
-				app.items[id].object.start();
-				app.items.splice(id, 1);
+				var used = app.items.splice(id, 1)[0];
+				used.object.start();
 			}
 		},
 		_removeItems: (id) => {
